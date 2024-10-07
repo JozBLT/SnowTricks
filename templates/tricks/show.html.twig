@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title "Tricks : " ~ trick.title %}
+
+{% block body %}
+    <div class="example-wrapper">
+        <h1>{{ trick.title }}</h1>
+
+        <p>
+            {{ trick.content | nl2br }}
+        </p>
+    </div>
+{% endblock %}
