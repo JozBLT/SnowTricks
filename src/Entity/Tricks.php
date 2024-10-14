@@ -22,22 +22,19 @@ class Tricks
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
-    #[Assert\Length(min: 5)]
+    #[Assert\Length(min: 3)]
     #[Assert\Regex('/[a-zA-Z0-9]+(?:-a-zA-Z0-9]+)*$/', message: 'Contient des caractères non autorisés')]
     #[BanWords]
-    private string $title = '';
+    private string $title;
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank]
     #[Assert\Length(min: 100)]
+    #[BanWords]
     private string $content = '';
 
     #[ORM\Column(length: 255)]
     private string $slug = '';
-
-//    #[ORM\Column(nullable: true)]
-//    #[Assert\Positive()]
-//    private ?int $category = null;
 
     #[ORM\Column]
     private ?DateTimeImmutable $createdAt = null;
