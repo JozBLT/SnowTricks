@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class TricksController extends AbstractController
 {
@@ -26,6 +27,7 @@ class TricksController extends AbstractController
     }
 
     #[Route('/tricks/create', name: 'tricks.create')]
+    #[IsGranted('ROLE_VERIFIED')]
     public function create(Request $request, EntityManagerInterface $entityManager): Response
     {
         $tricks = new Tricks();
@@ -49,6 +51,7 @@ class TricksController extends AbstractController
     }
 
     #[Route('/tricks/{id}/edit', name: 'tricks.edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_VERIFIED')]
     public function edit(Request $request, EntityManagerInterface $entityManager, Tricks $tricks): Response
     {
         $form = $this->createForm(TricksType::class, $tricks);
@@ -71,6 +74,7 @@ class TricksController extends AbstractController
     }
 
     #[Route('/tricks/{id}', name: 'tricks.delete', methods: ['DELETE'])]
+    #[IsGranted('ROLE_VERIFIED')]
     public function delete(EntityManagerInterface $entityManager, Tricks $tricks): Response
     {
         $entityManager->remove($tricks);

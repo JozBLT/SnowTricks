@@ -2,17 +2,20 @@
 
 {% block body %}
     <div class="example-wrapper">
-        <h1>Hello John! ✅</h1>
-        <p>This friendly message is coming from the tricks !</p>
-        <p>
-            <a class="btn btn-primary btn-sm" href="{{ path('tricks.create') }}">Créer un Tricks</a>
-        </p>
+        <h1>Bienvenue sur SnowTricks !</h1>
+        {% if app.user%}
+            <p>
+                <a class="btn btn-primary btn-sm" href="{{ path('tricks.create') }}">Créer un Tricks</a>
+            </p>
+        {% endif %}
 
         <table  class="table">
             <thead>
             <tr>
                 <th>Titre</th>
-                <th>Actions</th>
+                {% if app.user %}
+                    <th>Actions</th>
+                {% endif %}
             </tr>
             </thead>
             <tbody>
@@ -21,15 +24,17 @@
                     <td>
                         <a href="{{ path('tricks.show', {id: trick.id, slug: trick.slug}) }}">{{ trick.title }}</a>
                     </td>
-                    <td>
-                        <div class="d-flex gap-1">
-                            <a class="btn btn-primary btn-sm" href="{{ path('tricks.edit', {id: trick.id}) }}">Éditer</a>
-                            <form action="{{ path('tricks.delete', {id: trick.id}) }}" method="post">
-                                <input type="hidden" name="_method" value="DELETE">
-                                <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
-                            </form>
-                        </div>
-                    </td>
+                    {% if app.user %}
+                        <td>
+                            <div class="d-flex gap-1">
+                                <a class="btn btn-primary btn-sm" href="{{ path('tricks.edit', {id: trick.id}) }}">Éditer</a>
+                                <form action="{{ path('tricks.delete', {id: trick.id}) }}" method="post">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                                </form>
+                            </div>
+                        </td>
+                    {% endif %}
                 </tr>
             {% endfor %}
             </tbody>
