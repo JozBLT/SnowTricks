@@ -104,6 +104,13 @@ class TricksController extends AbstractController
     #[IsGranted('ROLE_VERIFIED')]
     public function delete(EntityManagerInterface $entityManager, Tricks $tricks): Response
     {
+        foreach ($tricks->getImages() as $image) {
+            $imagePath = $this->getParameter('kernel.project_dir') . '/public/tricks/gallery/' . $image->getImageName();
+            if ($image->getImageName() && file_exists($imagePath)) {
+                unlink($imagePath);
+            }
+        }
+
         $entityManager->remove($tricks);
         $entityManager->flush();
         $this->addFlash('success', 'Ce Tricks a bien été supprimé');
