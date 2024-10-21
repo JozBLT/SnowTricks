@@ -6,6 +6,56 @@
     <div class="example-wrapper">
         <h1>Créer un Tricks</h1>
 
-        {{ form(createForm) }}
+        {{ form_start(createForm) }}
+
+        <div>
+            {{ form_label(createForm.title) }}
+            {{ form_widget(createForm.title) }}
+            {{ form_errors(createForm.title) }}
+        </div>
+
+        <!-- Champ pour l'image principale -->
+        <div>
+            {{ form_label(createForm.thumbnailFile) }}
+            {{ form_widget(createForm.thumbnailFile) }}
+            {{ form_errors(createForm.thumbnailFile) }}
+        </div>
+
+        <div>
+            {{ form_label(createForm.content) }}
+            {{ form_widget(createForm.content) }}
+            {{ form_errors(createForm.content) }}
+        </div>
+
+        <!-- Champs pour les images secondaires -->
+        <div>
+            <label>Images secondaires</label>
+            <ul id="tricks-images-list" data-prototype="{{ form_widget(createForm.images.vars.prototype)|e }}">
+                {% for image in createForm.images %}
+                    <li>{{ form_widget(image) }}</li>
+                {% endfor %}
+            </ul>
+            <button type="button" class="btn btn-sm btn-success" id="add-image-btn">Ajouter une image</button>
+        </div>
+
+        {{ form_end(createForm) }}
     </div>
+
+    <!-- Ajout de scripts pour ajouter des champs d'images dynamiquement -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let imageCollectionHolder = document.querySelector('#tricks-images-list');
+            let addImageBtn = document.querySelector('#add-image-btn');
+
+            // Ajouter un nouveau champ d'image
+            addImageBtn.addEventListener('click', function () {
+                let prototype = imageCollectionHolder.dataset.prototype;
+                let index = imageCollectionHolder.children.length;
+                let newForm = prototype.replace(/__name__/g, index);
+                let newFormLi = document.createElement('li');
+                newFormLi.innerHTML = newForm;
+                imageCollectionHolder.appendChild(newFormLi);
+            });
+        });
+    </script>
 {% endblock %}

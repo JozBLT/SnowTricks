@@ -6,6 +6,8 @@ use App\Entity\Tricks;
 use DateTimeImmutable;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Event\PostSubmitEvent;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -19,17 +21,29 @@ class TricksType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add('thumbnailFile', FileType::class, [
+                'label' => 'Image à la Une',
+                'required' => false
+            ])
             ->add('title', TextType::class, [
                 'label' => 'Titre',
-                'empty_data' => ''
+                'empty_data' => '',
             ])
             ->add('content', TextareaType::class, [
                 'label' => 'Contenu',
                 'empty_data' => '',
-                'attr' => ['class' => 'tinymce']
+                'attr' => ['class' => 'tinymce'],
+            ])
+            ->add('images', CollectionType::class, [
+                'entry_type' => FileType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+                'required' => false,
+                'mapped' => false,
             ])
             ->add('save', SubmitType::class, [
-                'label' => 'Envoyer'
+                'label' => 'Envoyer',
             ])
             ->addEventListener(FormEvents::POST_SUBMIT, $this->autoSlug(...))
             ->addEventListener(FormEvents::POST_SUBMIT, $this->attachTimestamps(...))

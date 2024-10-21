@@ -1,10 +1,16 @@
 {% extends 'base.html.twig' %}
 
-{% block title "Édition de Tricks : " ~ trick.title %}
+{% block title "Édition de Tricks : " ~ tricks.title %}
 
 {% block body %}
     <div class="example-wrapper">
-        <h1>{{ trick.title }}</h1>
+        <h1>{{ tricks.title }}</h1>
+
+        {% if tricks.thumbnail %}
+            <img src="{{ vich_uploader_asset(tricks, 'thumbnailFile') }}" alt="preview" style="width: 80rem;">
+        {% else %}
+            <img src="{{ asset('images/creative_snowboard_1.jpg') }}" alt="preview" style="width: 80rem;">
+        {% endif %}
 
         {{ form(editForm) }}
     </div>
