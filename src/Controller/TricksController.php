@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Images;
 use App\Entity\Tricks;
+use App\Entity\Videos;
 use App\Form\TricksType;
 use App\Repository\TricksRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -42,8 +43,8 @@ class TricksController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $images = $form->get('images')->getData();
 
+            $images = $form->get('images')->getData();
             foreach ($images as $imageFile) {
                 if ($imageFile instanceof UploadedFile) {
                     $image = new Images();
@@ -51,6 +52,18 @@ class TricksController extends AbstractController
                     $image->setTricks($tricks);
                     $tricks->addImage($image);
                     $entityManager->persist($image);
+                }
+            }
+
+            $videos = $form->get('videos')->getData();
+            foreach ($videos as $videoLink) {
+                if ($videoLink) {
+                    $cleanedLink = $this->cleanVideoLink($videoLink);
+                    $video = new Videos();
+                    $video->setVideoLink($cleanedLink);
+                    $video->setTricksId($tricks);
+                    $tricks->addVideo($video);
+                    $entityManager->persist($video);
                 }
             }
 
@@ -116,5 +129,20 @@ class TricksController extends AbstractController
         $this->addFlash('success', 'Ce Tricks a bien été supprimé');
 
         return $this->redirectToRoute('homepage');
+    }
+
+    private function cleanVideoLink(string $link): string
+    {
+        if (str_contains($link, 'youtube.com')) {
+            parse_str(parse_url($link, PHP_URL_QUERY), $query);
+            return isset($query['v']) ? 'https://www.youtube.com/watch?v=' . $query['v'] : $link;
+        }
+
+        if (str_contains($link, 'dailymotion.com')) {
+            preg_match('/\/video\/([^_]+)/', $link, $matches);
+            return isset($matches[1]) ? 'https://www.dailymotion.com/video/' . $matches[1] : $link;
+        }
+
+        return $link;
     }
 }

@@ -33,6 +33,29 @@
                 </button>
             </div>
         {% endif %}
+        {% if tricks.videos|length > 0 %}
+            <h3>Vidéos</h3>
+            <div class="videos">
+                {% for video in tricks.videos %}
+                    <div class="video-wrapper">
+                        {% if 'youtube.com' in video.videoLink %}
+                            {% set youtubeId = video.videoLink|split('v=')[1] %}
+                            <iframe width="560" height="315"
+                                    src="https://www.youtube.com/embed/{{ youtubeId }}"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    allowfullscreen></iframe>
+                        {% elseif 'dailymotion.com' in video.videoLink %}
+                            {% set dailymotionId = video.videoLink|split('/')|last %}
+                            <iframe width="560" height="315"
+                                    src="https://www.dailymotion.com/embed/video/{{ dailymotionId }}"
+                                    allowfullscreen></iframe>
+                        {% else %}
+                            <p>Le format de la vidéo n'est pas supporté.</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
 
         <p>
             {{ tricks.content | nl2br }}

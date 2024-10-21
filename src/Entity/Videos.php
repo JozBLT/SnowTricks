@@ -2,31 +2,25 @@
 
 namespace App\Entity;
 
-use App\Repository\ImagesRepository;
+use App\Repository\VideosRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
-#[ORM\Entity(repositoryClass: ImagesRepository::class)]
+#[ORM\Entity(repositoryClass: VideosRepository::class)]
 #[Vich\Uploadable]
-class Images
+class Videos
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: Tricks::class, inversedBy: 'images')]
+    #[ORM\ManyToOne(targetEntity: Tricks::class, inversedBy: 'videos')]
     #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?Tricks $tricks = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $imageName = null;
-
-    #[Assert\Image]
-    #[Vich\UploadableField(mapping: 'tricks_gallery', fileNameProperty: 'imageName')]
-    private ?File $imageFile = null;
+    private ?string $videoLink = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
@@ -39,45 +33,31 @@ class Images
         return $this->id;
     }
 
-    public function getTricks(): ?Tricks
+    public function getTricksId(): ?Tricks
     {
         return $this->tricks;
     }
 
-    public function setTricks(?Tricks $tricks): static
+    public function setTricksId(?Tricks $tricks): static
     {
         $this->tricks = $tricks;
 
         return $this;
     }
 
-    public function getImageName(): ?string
+    public function getVideoLink(): ?string
     {
-        return $this->imageName;
+        return $this->videoLink;
     }
 
-    public function setImageName(string $imageName): static
+    public function setVideoLink(string $videoLink): static
     {
-        $this->imageName = $imageName;
+        $this->videoLink = $videoLink;
 
-        return $this;
-    }
-
-    public function getImageFile(): ?File
-    {
-        return $this->imageFile;
-    }
-
-    public function setImageFile(?File $imageFile = null): static
-    {
-        $this->imageFile = $imageFile;
-
-        if ($imageFile !== null) {
-            if (!$this->createdAt) {
-                $this->createdAt = new \DateTimeImmutable();
-            }
-            $this->updatedAt = new \DateTimeImmutable();
+        if (!$this->createdAt) {
+            $this->createdAt = new \DateTimeImmutable();
         }
+        $this->updatedAt = new \DateTimeImmutable();
 
         return $this;
     }

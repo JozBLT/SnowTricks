@@ -60,9 +60,16 @@ class Tricks
     #[ORM\OneToMany(targetEntity: Images::class, mappedBy: 'tricks', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $images;
 
+    /**
+     * @var Collection<int, Videos>
+     */
+    #[ORM\OneToMany(targetEntity: Videos::class, mappedBy: 'tricks')]
+    private Collection $videos;
+
     public function __construct()
     {
         $this->images = new ArrayCollection();
+        $this->videos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -178,6 +185,36 @@ class Tricks
             // set the owning side to null (unless already changed)
             if ($image->getTricks() === $this) {
                 $image->setTricks(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Videos>
+     */
+    public function getVideos(): Collection
+    {
+        return $this->videos;
+    }
+
+    public function addVideo(Videos $video): static
+    {
+        if (!$this->videos->contains($video)) {
+            $this->videos->add($video);
+            $video->setTricksId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVideo(Videos $video): static
+    {
+        if ($this->videos->removeElement($video)) {
+            // set the owning side to null (unless already changed)
+            if ($video->getTricksId() === $this) {
+                $video->setTricksId(null);
             }
         }
 

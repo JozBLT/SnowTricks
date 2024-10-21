@@ -38,6 +38,17 @@
             <button type="button" class="btn btn-sm btn-success" id="add-image-btn">Ajouter une image</button>
         </div>
 
+        <!-- Champs pour les videos -->
+        <div>
+            <label>Vidéos</label>
+            <ul id="tricks-videos-list" data-prototype="{{ form_widget(createForm.videos.vars.prototype)|e }}">
+                {% for video in createForm.videos %}
+                    <li>{{ form_widget(video) }}</li>
+                {% endfor %}
+            </ul>
+            <button type="button" class="btn btn-sm btn-success" id="add-video-btn">Ajouter une vidéo</button>
+        </div>
+
         {{ form_end(createForm) }}
     </div>
 
@@ -55,6 +66,19 @@
                 let newFormLi = document.createElement('li');
                 newFormLi.innerHTML = newForm;
                 imageCollectionHolder.appendChild(newFormLi);
+            });
+
+            // Gestion des vidéos
+            let videoCollectionHolder = document.querySelector('#tricks-videos-list');
+            let addVideoBtn = document.querySelector('#add-video-btn');
+
+            addVideoBtn.addEventListener('click', function () {
+                let prototype = videoCollectionHolder.dataset.prototype;
+                let index = videoCollectionHolder.children.length;
+                let newForm = prototype.replace(/__name__/g, index);
+                let newFormLi = document.createElement('li');
+                newFormLi.innerHTML = newForm;
+                videoCollectionHolder.appendChild(newFormLi);
             });
         });
     </script>
