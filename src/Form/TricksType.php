@@ -35,30 +35,14 @@ class TricksType extends AbstractType
                 'empty_data' => '',
                 'attr' => ['class' => 'tinymce'],
             ])
-            ->add('images', CollectionType::class, [
-                'label' => false,
-                'entry_type' => FileType::class,
-                'allow_add' => true,
-                'allow_delete' => true,
-                'by_reference' => false,
-                'required' => false,
-                'mapped' => false,
-            ])
-            ->add('videos', CollectionType::class, [
-                'label' => false,
-                'entry_type' => UrlType::class,
-                'allow_add' => true,
-                'allow_delete' => true,
-                'by_reference' => false,
-                'required' => false,
-                'mapped' => false,
-            ])
             ->add('save', SubmitType::class, [
                 'label' => 'Envoyer',
             ])
             ->addEventListener(FormEvents::POST_SUBMIT, $this->autoSlug(...))
             ->addEventListener(FormEvents::POST_SUBMIT, $this->attachTimestamps(...))
         ;
+        $this->addCollectionField($builder, 'images', FileType::class);
+        $this->addCollectionField($builder, 'videos', UrlType::class);
     }
 
     public function autoSlug(PostSubmitEvent $event): void
@@ -92,6 +76,19 @@ class TricksType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Tricks::class,
+        ]);
+    }
+
+    private function addCollectionField(FormBuilderInterface $builder, string $name, string $entryType): void
+    {
+        $builder->add($name, CollectionType::class, [
+            'label' => false,
+            'entry_type' => $entryType,
+            'allow_add' => true,
+            'allow_delete' => true,
+            'by_reference' => false,
+            'required' => false,
+            'mapped' => false,
         ]);
     }
 }

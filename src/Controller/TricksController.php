@@ -44,8 +44,8 @@ class TricksController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->addNewImages($form->get('images')->getData(), $tricks, $entityManager);
-            $this->addNewVideos($form->get('videos')->getData(), $tricks, $entityManager);
+            $this->addMedia($form->get('images')->getData(), $tricks, $entityManager, 'image');
+            $this->addMedia($form->get('videos')->getData(), $tricks, $entityManager, 'video');
 
             $entityManager->persist($tricks);
             $entityManager->flush();
@@ -74,42 +74,10 @@ class TricksController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $deleteImages = $request->get('existing_images_delete', []);
-            foreach ($tricks->getImages() as $image) {
-                if (isset($deleteImages[$image->getId()])) {
-                    $this->deleteImageFile($image);
-                    $entityManager->remove($image);
-                    $tricks->removeImage($image);
-                }
-            }
-
-            $replaceImages = $request->files->get('existing_images_replace', []);
-            foreach ($tricks->getImages() as $image) {
-                if (isset($replaceImages[$image->getId()])) {
-                    $this->replaceImageFile($image, $replaceImages[$image->getId()]);
-                }
-            }
-
-
-            $deleteVideos = $request->get('existing_videos_delete', []);
-            foreach ($tricks->getVideos() as $video) {
-                if (isset($deleteVideos[$video->getId()])) {
-                    $entityManager->remove($video);
-                    $tricks->removeVideo($video);
-                }
-            }
-
-            $replaceVideos = $request->get('existing_videos_replace', []);
-            foreach ($tricks->getVideos() as $video) {
-                if (isset($replaceVideos[$video->getId()])) {
-                    $cleanedLink = $this->cleanVideoLink($replaceVideos[$video->getId()]);
-                    $video->setVideoLink($cleanedLink);
-                }
-            }
-
-            $this->addNewImages($form->get('images')->getData(), $tricks, $entityManager);
-            $this->addNewVideos($form->get('videos')->getData(), $tricks, $entityManager);
+            $this->handleImageModifications($request, $tricks, $entityManager);
+            $this->handleVideoModifications($request, $tricks, $entityManager);
+            $this->addMedia($form->get('images')->getData(), $tricks, $entityManager, 'image');
+            $this->addMedia($form->get('videos')->getData(), $tricks, $entityManager, 'video');
             $entityManager->flush();
             $this->addFlash('success', 'Ce tricks a bien été modifié !');
 
@@ -162,27 +130,18 @@ class TricksController extends AbstractController
         return $link;
     }
 
-    private function addNewImages(array $newImages, Tricks $tricks, EntityManagerInterface $entityManager): void
+    private function addMedia(array $newMedia, Tricks $tricks, EntityManagerInterface $entityManager, string $type): void
     {
-        foreach ($newImages as $imageFile) {
-            if ($imageFile instanceof UploadedFile) {
+        foreach ($newMedia as $mediaFile) {
+            if ($type === 'image' && $mediaFile instanceof UploadedFile) {
                 $image = new Images();
-                $image->setImageFile($imageFile);
-                $image->setTricks($tricks);
+                $image->setImageFile($mediaFile);
                 $tricks->addImage($image);
                 $entityManager->persist($image);
-            }
-        }
-    }
-
-    private function addNewVideos(array $newVideos, Tricks $tricks, EntityManagerInterface $entityManager): void
-    {
-        foreach ($newVideos as $videoLink) {
-            if ($videoLink) {
-                $cleanedLink = $this->cleanVideoLink($videoLink);
+            } elseif ($type === 'video' && !empty($mediaFile)) {
+                $cleanedLink = $this->cleanVideoLink($mediaFile);
                 $video = new Videos();
                 $video->setVideoLink($cleanedLink);
-                $video->setTricks($tricks);
                 $tricks->addVideo($video);
                 $entityManager->persist($video);
             }
@@ -202,5 +161,43 @@ class TricksController extends AbstractController
         $this->deleteImageFile($image);
         $image->setImageFile($newImageFile);
         $image->setUpdatedAt(new DateTimeImmutable());
+    }
+
+    private function handleImageModifications(Request $request, Tricks $tricks, EntityManagerInterface $entityManager): void
+    {
+        $deleteImages = $request->get('existing_images_delete', []);
+        $replaceImages = $request->files->get('existing_images_replace', []);
+
+        foreach ($tricks->getImages() as $image) {
+
+            if (isset($deleteImages[$image->getId()])) {
+                $this->deleteImageFile($image);
+                $entityManager->remove($image);
+                $tricks->removeImage($image);
+            }
+
+            if (isset($replaceImages[$image->getId()]) && $replaceImages[$image->getId()] instanceof UploadedFile) {
+                $this->replaceImageFile($image, $replaceImages[$image->getId()]);
+            }
+        }
+    }
+
+    private function handleVideoModifications(Request $request, Tricks $tricks, EntityManagerInterface $entityManager): void
+    {
+        $deleteVideos = $request->get('existing_videos_delete', []);
+        $replaceVideos = $request->get('existing_videos_replace', []);
+
+        foreach ($tricks->getVideos() as $video) {
+
+            if (isset($deleteVideos[$video->getId()])) {
+                $entityManager->remove($video);
+                $tricks->removeVideo($video);
+            }
+
+            if (isset($replaceVideos[$video->getId()])) {
+                $cleanedLink = $this->cleanVideoLink($replaceVideos[$video->getId()]);
+                $video->setVideoLink($cleanedLink);
+            }
+        }
     }
 }
