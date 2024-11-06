@@ -7,6 +7,7 @@ use App\Entity\Tricks;
 use App\Entity\Videos;
 use App\Form\TricksType;
 use App\Repository\TricksRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -43,29 +44,8 @@ class TricksController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $images = $form->get('images')->getData();
-            foreach ($images as $imageFile) {
-                if ($imageFile instanceof UploadedFile) {
-                    $image = new Images();
-                    $image->setImageFile($imageFile);
-                    $image->setTricks($tricks);
-                    $tricks->addImage($image);
-                    $entityManager->persist($image);
-                }
-            }
-
-            $videos = $form->get('videos')->getData();
-            foreach ($videos as $videoLink) {
-                if ($videoLink) {
-                    $cleanedLink = $this->cleanVideoLink($videoLink);
-                    $video = new Videos();
-                    $video->setVideoLink($cleanedLink);
-                    $video->setTricksId($tricks);
-                    $tricks->addVideo($video);
-                    $entityManager->persist($video);
-                }
-            }
+            $this->addNewImages($form->get('images')->getData(), $tricks, $entityManager);
+            $this->addNewVideos($form->get('videos')->getData(), $tricks, $entityManager);
 
             $entityManager->persist($tricks);
             $entityManager->flush();
@@ -94,6 +74,42 @@ class TricksController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $deleteImages = $request->get('existing_images_delete', []);
+            foreach ($tricks->getImages() as $image) {
+                if (isset($deleteImages[$image->getId()])) {
+                    $this->deleteImageFile($image);
+                    $entityManager->remove($image);
+                    $tricks->removeImage($image);
+                }
+            }
+
+            $replaceImages = $request->files->get('existing_images_replace', []);
+            foreach ($tricks->getImages() as $image) {
+                if (isset($replaceImages[$image->getId()])) {
+                    $this->replaceImageFile($image, $replaceImages[$image->getId()]);
+                }
+            }
+
+
+            $deleteVideos = $request->get('existing_videos_delete', []);
+            foreach ($tricks->getVideos() as $video) {
+                if (isset($deleteVideos[$video->getId()])) {
+                    $entityManager->remove($video);
+                    $tricks->removeVideo($video);
+                }
+            }
+
+            $replaceVideos = $request->get('existing_videos_replace', []);
+            foreach ($tricks->getVideos() as $video) {
+                if (isset($replaceVideos[$video->getId()])) {
+                    $cleanedLink = $this->cleanVideoLink($replaceVideos[$video->getId()]);
+                    $video->setVideoLink($cleanedLink);
+                }
+            }
+
+            $this->addNewImages($form->get('images')->getData(), $tricks, $entityManager);
+            $this->addNewVideos($form->get('videos')->getData(), $tricks, $entityManager);
             $entityManager->flush();
             $this->addFlash('success', 'Ce tricks a bien été modifié !');
 
@@ -144,5 +160,47 @@ class TricksController extends AbstractController
         }
 
         return $link;
+    }
+
+    private function addNewImages(array $newImages, Tricks $tricks, EntityManagerInterface $entityManager): void
+    {
+        foreach ($newImages as $imageFile) {
+            if ($imageFile instanceof UploadedFile) {
+                $image = new Images();
+                $image->setImageFile($imageFile);
+                $image->setTricks($tricks);
+                $tricks->addImage($image);
+                $entityManager->persist($image);
+            }
+        }
+    }
+
+    private function addNewVideos(array $newVideos, Tricks $tricks, EntityManagerInterface $entityManager): void
+    {
+        foreach ($newVideos as $videoLink) {
+            if ($videoLink) {
+                $cleanedLink = $this->cleanVideoLink($videoLink);
+                $video = new Videos();
+                $video->setVideoLink($cleanedLink);
+                $video->setTricks($tricks);
+                $tricks->addVideo($video);
+                $entityManager->persist($video);
+            }
+        }
+    }
+
+    private function deleteImageFile(Images $image): void
+    {
+        $imagePath = $this->getParameter('kernel.project_dir') . '/public/tricks/gallery/' . $image->getImageName();
+        if (file_exists($imagePath)) {
+            unlink($imagePath);
+        }
+    }
+
+    private function replaceImageFile(Images $image, UploadedFile $newImageFile): void
+    {
+        $this->deleteImageFile($image);
+        $image->setImageFile($newImageFile);
+        $image->setUpdatedAt(new DateTimeImmutable());
     }
 }

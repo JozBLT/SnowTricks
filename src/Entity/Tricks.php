@@ -203,7 +203,7 @@ class Tricks
     {
         if (!$this->videos->contains($video)) {
             $this->videos->add($video);
-            $video->setTricksId($this);
+            $video->setTricks($this);
         }
 
         return $this;
@@ -213,8 +213,8 @@ class Tricks
     {
         if ($this->videos->removeElement($video)) {
             // set the owning side to null (unless already changed)
-            if ($video->getTricksId() === $this) {
-                $video->setTricksId(null);
+            if ($video->getTricks() === $this) {
+                $video->setTricks(null);
             }
         }
 

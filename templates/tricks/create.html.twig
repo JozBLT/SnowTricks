@@ -14,7 +14,6 @@
             {{ form_errors(createForm.title) }}
         </div>
 
-        <!-- Champ pour l'image principale -->
         <div>
             {{ form_label(createForm.thumbnailFile) }}
             {{ form_widget(createForm.thumbnailFile) }}
@@ -27,7 +26,6 @@
             {{ form_errors(createForm.content) }}
         </div>
 
-        <!-- Champs pour les images secondaires -->
         <div>
             <label>Images secondaires</label>
             <ul id="tricks-images-list" data-prototype="{{ form_widget(createForm.images.vars.prototype)|e }}">
@@ -38,7 +36,6 @@
             <button type="button" class="btn btn-sm btn-success" id="add-image-btn">Ajouter une image</button>
         </div>
 
-        <!-- Champs pour les videos -->
         <div>
             <label>Vidéos</label>
             <ul id="tricks-videos-list" data-prototype="{{ form_widget(createForm.videos.vars.prototype)|e }}">
@@ -52,13 +49,11 @@
         {{ form_end(createForm) }}
     </div>
 
-    <!-- Ajout de scripts pour ajouter des champs d'images dynamiquement -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             let imageCollectionHolder = document.querySelector('#tricks-images-list');
             let addImageBtn = document.querySelector('#add-image-btn');
 
-            // Ajouter un nouveau champ d'image
             addImageBtn.addEventListener('click', function () {
                 let prototype = imageCollectionHolder.dataset.prototype;
                 let index = imageCollectionHolder.children.length;
@@ -68,7 +63,6 @@
                 imageCollectionHolder.appendChild(newFormLi);
             });
 
-            // Gestion des vidéos
             let videoCollectionHolder = document.querySelector('#tricks-videos-list');
             let addVideoBtn = document.querySelector('#add-video-btn');
 

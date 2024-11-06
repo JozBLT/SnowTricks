@@ -6,14 +6,12 @@
     <div class="example-wrapper">
         <h1>{{ tricks.title }}</h1>
 
-        <!-- Image principale -->
         {% if tricks.thumbnail %}
             <img src="{{ vich_uploader_asset(tricks, 'thumbnailFile') }}" alt="preview" style="width: 80rem;">
         {% else %}
             <img src="{{ asset('images/creative_snowboard_1.jpg') }}" alt="alternative_preview" style="width: 80rem;">
         {% endif %}
 
-        <!-- Carousel d'images secondaires -->
         {% if tricks.images|length > 0 %}
             <div id="carouselImages" class="carousel slide carousel-fade" data-bs-ride="carousel">
                 <div class="carousel-inner">
@@ -33,6 +31,7 @@
                 </button>
             </div>
         {% endif %}
+
         {% if tricks.videos|length > 0 %}
             <h3>Vidéos</h3>
             <div class="videos">
