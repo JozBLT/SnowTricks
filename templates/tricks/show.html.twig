@@ -1,13 +1,75 @@
 {% extends 'base.html.twig' %}
 
-{% block title "Tricks : " ~ trick.title %}
+{% block title "Tricks : " ~ tricks.title %}
 
 {% block body %}
     <div class="example-wrapper">
-        <h1>{{ trick.title }}</h1>
+        <h1>{{ tricks.title }}</h1>
+        <p>Auteur : {{ tricks.createdBy ? tricks.createdBy.username : 'Utilisateur supprimé' }}</p>
+        <p>
+            {% if tricks.updatedAt > tricks.createdAt %}
+                Dernière modification : {{ tricks.updatedAt|date('d/m/Y') }}
+            {% else %}
+                Créé le : {{ tricks.createdAt|date('d/m/Y') }}
+            {% endif %}
+        </p>
+
+        {% if tricks.thumbnail %}
+            <img src="{{ vich_uploader_asset(tricks, 'thumbnailFile') }}" alt="preview" style="width: 80rem;">
+        {% else %}
+            <img src="{{ asset('images/creative_snowboard_1.jpg') }}" alt="alternative_preview" style="width: 80rem;">
+        {% endif %}
+
+        {% if tricks.images|length > 0 %}
+            <div id="carouselImages" class="carousel slide carousel-fade" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    {% for image in tricks.images %}
+                        <div class="carousel-item {% if loop.first %}active{% endif %}">
+                            <img src="{{ vich_uploader_asset(image, 'imageFile') }}" class="d-block w-100" alt="Image secondaire">
+                        </div>
+                    {% endfor %}
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselImages" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Précédent</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselImages" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Suivant</span>
+                </button>
+            </div>
+        {% endif %}
+
+        {% if tricks.videos|length > 0 %}
+            <h3>Vidéos</h3>
+            <div class="videos">
+                {% for video in tricks.videos %}
+                    <div class="video-wrapper">
+                        {% if 'youtube.com' in video.videoLink %}
+                            {% set youtubeId = video.videoLink|split('v=')[1] %}
+                            <iframe width="560" height="315"
+                                    src="https://www.youtube.com/embed/{{ youtubeId }}"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    allowfullscreen></iframe>
+                        {% elseif 'dailymotion.com' in video.videoLink %}
+                            {% set dailymotionId = video.videoLink|split('/')|last %}
+                            <iframe width="560" height="315"
+                                    src="https://www.dailymotion.com/embed/video/{{ dailymotionId }}"
+                                    allowfullscreen></iframe>
+                        {% else %}
+                            <p>Le format de la vidéo n'est pas supporté.</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
 
         <p>
-            {{ trick.content | nl2br }}
+            {{ tricks.content | nl2br }}
         </p>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}

@@ -28,7 +28,9 @@
                         <td>
                             <div class="d-flex gap-1">
                                 <a class="btn btn-primary btn-sm" href="{{ path('tricks.edit', {id: trick.id}) }}">Éditer</a>
-                                <form action="{{ path('tricks.delete', {id: trick.id}) }}" method="post">
+                                <form action="{{ path('tricks.delete', {id: trick.id}) }}"
+                                      method="post"
+                                      onsubmit="return confirm('Êtes-vous sûr ?');">
                                     <input type="hidden" name="_method" value="DELETE">
                                     <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
                                 </form>

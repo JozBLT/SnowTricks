@@ -6,6 +6,74 @@
     <div class="example-wrapper">
         <h1>Créer un Tricks</h1>
 
-        {{ form(createForm) }}
+        {{ form_start(createForm) }}
+
+        <div>
+            {{ form_label(createForm.title) }}
+            {{ form_widget(createForm.title) }}
+            {{ form_errors(createForm.title) }}
+        </div>
+
+        <div>
+            {{ form_label(createForm.thumbnailFile) }}
+            {{ form_widget(createForm.thumbnailFile) }}
+            {{ form_errors(createForm.thumbnailFile) }}
+        </div>
+
+        <div>
+            {{ form_label(createForm.content) }}
+            {{ form_widget(createForm.content) }}
+            {{ form_errors(createForm.content) }}
+        </div>
+
+        <div>
+            <label>Images secondaires</label>
+            <ul id="tricks-images-list" data-prototype="{{ form_widget(createForm.images.vars.prototype)|e }}">
+                {% for image in createForm.images %}
+                    <li>{{ form_widget(image) }}</li>
+                {% endfor %}
+            </ul>
+            <button type="button" class="btn btn-sm btn-success" id="add-image-btn">Ajouter une image</button>
+        </div>
+
+        <div>
+            <label>Vidéos</label>
+            <ul id="tricks-videos-list" data-prototype="{{ form_widget(createForm.videos.vars.prototype)|e }}">
+                {% for video in createForm.videos %}
+                    <li>{{ form_widget(video) }}</li>
+                {% endfor %}
+            </ul>
+            <button type="button" class="btn btn-sm btn-success" id="add-video-btn">Ajouter une vidéo</button>
+        </div>
+
+        {{ form_end(createForm) }}
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let imageCollectionHolder = document.querySelector('#tricks-images-list');
+            let addImageBtn = document.querySelector('#add-image-btn');
+
+            addImageBtn.addEventListener('click', function () {
+                let prototype = imageCollectionHolder.dataset.prototype;
+                let index = imageCollectionHolder.children.length;
+                let newForm = prototype.replace(/__name__/g, index);
+                let newFormLi = document.createElement('li');
+                newFormLi.innerHTML = newForm;
+                imageCollectionHolder.appendChild(newFormLi);
+            });
+
+            let videoCollectionHolder = document.querySelector('#tricks-videos-list');
+            let addVideoBtn = document.querySelector('#add-video-btn');
+
+            addVideoBtn.addEventListener('click', function () {
+                let prototype = videoCollectionHolder.dataset.prototype;
+                let index = videoCollectionHolder.children.length;
+                let newForm = prototype.replace(/__name__/g, index);
+                let newFormLi = document.createElement('li');
+                newFormLi.innerHTML = newForm;
+                videoCollectionHolder.appendChild(newFormLi);
+            });
+        });
+    </script>
 {% endblock %}
