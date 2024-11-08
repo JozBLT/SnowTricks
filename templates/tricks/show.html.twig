@@ -67,6 +67,8 @@
         <p>
             {{ tricks.content | nl2br }}
         </p>
+
+        {% include 'tricks/comments.html.twig' with {'commentForm': commentForm} %}
     </div>
 {% endblock %}
 

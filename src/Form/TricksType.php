@@ -24,7 +24,7 @@ class TricksType extends AbstractType
         $builder
             ->add('thumbnailFile', FileType::class, [
                 'label' => 'Image à la Une',
-                'required' => false
+                'required' => false,
             ])
             ->add('title', TextType::class, [
                 'label' => 'Titre',
@@ -33,7 +33,7 @@ class TricksType extends AbstractType
             ->add('content', TextareaType::class, [
                 'label' => 'Contenu',
                 'empty_data' => '',
-                'attr' => ['class' => 'tinymce'],
+                'attr' => ['class' => 'tinymce', 'rows' => 10],
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'Envoyer',

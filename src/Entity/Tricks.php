@@ -70,10 +70,17 @@ class Tricks
     #[ORM\OneToMany(targetEntity: Videos::class, mappedBy: 'tricks')]
     private Collection $videos;
 
+    /**
+     * @var Collection<int, Comments>
+     */
+    #[ORM\OneToMany(targetEntity: Comments::class, mappedBy: 'tricks', orphanRemoval: true)]
+    private Collection $comments;
+
     public function __construct()
     {
         $this->images = new ArrayCollection();
         $this->videos = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -231,6 +238,36 @@ class Tricks
             // set the owning side to null (unless already changed)
             if ($video->getTricks() === $this) {
                 $video->setTricks(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Comments>
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comments $comment): static
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments->add($comment);
+            $comment->setTricks($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Comments $comment): static
+    {
+        if ($this->comments->removeElement($comment)) {
+            // set the owning side to null (unless already changed)
+            if ($comment->getTricks() === $this) {
+                $comment->setTricks(null);
             }
         }
 
