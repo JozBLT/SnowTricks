@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Comments;
 use App\Entity\Images;
 use App\Entity\Tricks;
 use App\Entity\Videos;
+use App\Form\CommentsType;
 use App\Form\TricksType;
 use App\Repository\TricksRepository;
 use DateTimeImmutable;
@@ -27,11 +29,17 @@ class TricksController extends AbstractController
     public function show(string $slug, int $id, TricksRepository $tricksRepository): Response
     {
         $tricks = $tricksRepository->find($id);
+
         if ($tricks->getSlug() !== $slug) {
             return $this->redirectToRoute('tricks.show', ['slug' => $tricks->getSlug(), 'id' => $tricks->getId()]);
         }
+
+        $comment = new Comments();
+        $commentForm = $this->createForm(CommentsType::class, $comment);
+
         return $this->render('tricks/show.html.twig', [
-            'tricks' => $tricks
+            'tricks' => $tricks,
+            'commentForm' => $commentForm->createView(),
         ]);
     }
 
