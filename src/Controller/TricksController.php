@@ -44,6 +44,7 @@ class TricksController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $tricks->setCreatedBy($this->getUser());
             $this->addMedia($form->get('images')->getData(), $tricks, $entityManager, 'image');
             $this->addMedia($form->get('videos')->getData(), $tricks, $entityManager, 'video');
 

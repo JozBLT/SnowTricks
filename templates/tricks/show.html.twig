@@ -5,6 +5,14 @@
 {% block body %}
     <div class="example-wrapper">
         <h1>{{ tricks.title }}</h1>
+        <p>Auteur : {{ tricks.createdBy ? tricks.createdBy.username : 'Utilisateur supprimé' }}</p>
+        <p>
+            {% if tricks.updatedAt > tricks.createdAt %}
+                Dernière modification : {{ tricks.updatedAt|date('d/m/Y') }}
+            {% else %}
+                Créé le : {{ tricks.createdAt|date('d/m/Y') }}
+            {% endif %}
+        </p>
 
         {% if tricks.thumbnail %}
             <img src="{{ vich_uploader_asset(tricks, 'thumbnailFile') }}" alt="preview" style="width: 80rem;">

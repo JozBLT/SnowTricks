@@ -54,6 +54,10 @@ class Tricks
     #[Assert\Image]
     private ?File $thumbnailFile = null;
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?User $createdBy = null;
+
     /**
      * @var Collection<int, Images>
      */
@@ -157,6 +161,18 @@ class Tricks
     public function setThumbnailFile(?File $thumbnailFile): static
     {
         $this->thumbnailFile = $thumbnailFile;
+
+        return $this;
+    }
+
+    public function getCreatedBy(): ?User
+    {
+        return $this->createdBy;
+    }
+
+    public function setCreatedBy(?User $user): static
+    {
+        $this->createdBy = $user;
 
         return $this;
     }
