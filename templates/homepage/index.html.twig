@@ -3,7 +3,7 @@
 {% block body %}
     <div class="example-wrapper">
         <h1>Bienvenue sur SnowTricks !</h1>
-        {% if app.user%}
+        {% if app.user and app.user.isVerified %}
             <p>
                 <a class="btn btn-primary btn-sm" href="{{ path('tricks.create') }}">Créer un Tricks</a>
             </p>
@@ -13,7 +13,7 @@
             <thead>
             <tr>
                 <th>Titre</th>
-                {% if app.user %}
+                {% if app.user and app.user.isVerified %}
                     <th>Actions</th>
                 {% endif %}
             </tr>
@@ -24,7 +24,7 @@
                     <td>
                         <a href="{{ path('tricks.show', {id: trick.id, slug: trick.slug}) }}">{{ trick.title }}</a>
                     </td>
-                    {% if app.user %}
+                    {% if app.user and app.user.isVerified %}
                         <td>
                             <div class="d-flex gap-1">
                                 <a class="btn btn-primary btn-sm" href="{{ path('tricks.edit', {id: trick.id}) }}">Éditer</a>

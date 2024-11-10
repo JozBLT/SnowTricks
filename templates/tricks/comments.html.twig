@@ -12,7 +12,7 @@
     Aucun commentaire pour le moment. Soyez le premier à commenter !
 {% endif %}
 
-{% if app.user %}
+{% if app.user and app.user.isVerified %}
     {{ form_start(commentForm, {'action': path('comment.create', {'id': tricks.id})}) }}
 
     {{ form_label(commentForm.content) }}

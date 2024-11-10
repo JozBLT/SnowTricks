@@ -46,9 +46,10 @@ class RegistrationController extends AbstractController
                 (new TemplatedEmail())
                     ->from(new Address('support@demo.fr', 'support'))
                     ->to((string) $user->getEmail())
-                    ->subject('Please Confirm your Email')
+                    ->subject('Confirmez votre adresse email')
                     ->htmlTemplate('registration/confirmation_email.html.twig')
             );
+            $this->addFlash('success', 'Un email de confirmation vous a été envoyé afin de valider votre adresse email.');
 
             // do anything else you need here, like send an email
 
@@ -77,8 +78,33 @@ class RegistrationController extends AbstractController
         }
 
         // @TODO Change the redirect on success and handle or remove the flash message in your templates
-        $this->addFlash('success', 'Your email address has been verified.');
+        $this->addFlash('success', 'Votre adresse email a été vérifiée.');
 
-        return $this->redirectToRoute('register');
+        return $this->redirectToRoute('login');
+    }
+
+    #[Route('/resend-verification-email', name: 'resend_verification_email')]
+    public function resendVerificationEmail(): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if (!$user) {
+            $this->addFlash('error', 'Vous devez être connecté pour renvoyer un email de vérification.');
+            return $this->redirectToRoute('login');
+        }
+
+        // Envoyer un nouvel email de confirmation
+        $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
+            (new TemplatedEmail())
+                ->from(new Address('support@demo.fr', 'support'))
+                ->to((string) $user->getEmail())
+                ->subject('Confirmez votre adresse email')
+                ->htmlTemplate('registration/confirmation_email.html.twig')
+        );
+
+        $this->addFlash('success', 'Un nouvel email de confirmation vous a été envoyé.');
+
+        return $this->redirectToRoute('homepage');
     }
 }
