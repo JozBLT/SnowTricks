@@ -1,5 +1,11 @@
 {% for type, messages in app.flashes %}
-    <div class="alert alert-{{ type }}">
+    {% set colors = {
+        'success': 'green',
+        'danger': 'red',
+        'warning': 'yellow',
+        'info': 'blue'
+    } %}
+    <div class="p-4 mb-4 text-{{ colors[type]|default('gray') }}-700 bg-{{ colors[type]|default('gray') }}-100 border border-{{ colors[type]|default('gray') }}-500 rounded">
         {{ messages | join('. ') }}
     </div>
 {% endfor %}
