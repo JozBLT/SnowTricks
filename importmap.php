@@ -25,4 +25,10 @@ return [
     '@hotwired/turbo' => [
         'version' => '7.3.0',
     ],
+    'swiper' => [
+        'version' => '11.1.15',
+    ],
+    'swiper/modules' => [
+        'version' => '11.1.15',
+    ],
 ];

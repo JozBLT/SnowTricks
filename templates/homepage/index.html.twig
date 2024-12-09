@@ -4,14 +4,17 @@
     <!-- Banner Section -->
     <div class="relative bg-cover bg-center"
          style="height: calc(100vh - 60px); background-image: url('{{ asset('images/snowboardBanner.jpg') }}');">
-        <a href="#tricks-list"
+        <a href="#tricks-top-anchor"
            class="absolute bottom-4 right-4 bg-white text-black p-2 rounded-full shadow-lg hover:bg-gray-200 animate-bounce">
             ↓
         </a>
     </div>
 
+    <!-- Tricks Anchor -->
+    <div id="tricks-top-anchor"></div>
+
     <!-- Tricks Section -->
-    <div id="tricks-list" class="container mx-auto mt-8">
+    <div class="container mx-auto mt-8">
         {% if app.user and app.user.isVerified %}
             <p>
                 <a class="bg-blue-500 text-white px-4 py-2 rounded text-sm hover:bg-blue-600"
@@ -21,19 +24,20 @@
             </p>
         {% endif %}
 
-        <!-- Conteneur pour les Tricks -->
+        <!-- Tricks Container -->
         <div id="tricks-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
             {% include 'homepage/_tricks.html.twig' with {'tricks': tricks} %}
         </div>
 
-        <!-- Bouton "Afficher plus" -->
+        <!-- "Load More" Button -->
         <div class="text-center mt-4">
             <button id="load-more" class="bg-blue-500 text-white px-4 py-2 rounded text-sm hover:bg-blue-600">
                 Afficher plus
             </button>
         </div>
     </div>
-    <a href="#tricks-list" id="scroll-to-top" class="fixed bottom-4 right-4 hidden bg-blue-500 text-white p-2 rounded-full shadow-lg hover:bg-blue-600">
+    <a href="#tricks-top-anchor" id="scroll-to-top"
+       class="fixed bottom-4 right-4 hidden bg-blue-500 text-white p-2 rounded-full shadow-lg hover:bg-blue-600">
         ↑
     </a>
 {% endblock %}

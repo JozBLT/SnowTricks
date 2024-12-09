@@ -24,7 +24,7 @@ class HomeController extends AbstractController
     #[Route('/load-more-tricks', name: 'load_more_tricks', methods: ['GET'])]
     public function loadMore(TricksRepository $tricksRepository, Request $request): JsonResponse
     {
-        $offset = $request->query->getInt('offset', 0);
+        $offset = $request->query->getInt('offset');
         $tricks = $tricksRepository->findBy([], ['createdAt' => 'DESC'], 10, $offset);
         $hasMore = count($tricks) === 10;
         $html = $this->renderView('homepage/_tricks.html.twig', [

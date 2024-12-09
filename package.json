@@ -25,6 +25,7 @@
         "build": "encore production --progress"
     },
     "dependencies": {
-        "stimulus": "^3.2.2"
+        "stimulus": "^3.2.2",
+        "swiper": "^11.1.15"
     }
 }

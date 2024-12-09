@@ -25,7 +25,7 @@
                         </li>
                         {% if not app.user.isVerified %}
                             <div class="flex items-center space-x-2 text-white">
-                                <p>Votre compte n'est pas encore validé</p>
+                                <p>| Votre compte n'est pas encore validé</p>
                                 <a class="underline" href="{{ path('resend_verification_email') }}">
                                     Renvoyer l'email de confirmation
                                 </a>

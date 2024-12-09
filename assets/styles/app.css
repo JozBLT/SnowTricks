@@ -2,7 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Défilement fluide */
+/* Smooth Scroll */
 html {
     scroll-behavior: smooth;
+}
+
+/* Swiper Slider */
+.swiper {
+    width: 100%;
+    height: auto;
+}
+
+.swiper-slide img,
+.swiper-slide iframe {
+    width: 256px;
+    height: 192px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    display: block;
+    margin: 0 auto;
+}
+
+.swiper-button-prev,
+.swiper-button-next {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.8);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: black;
+    font-size: 18px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.swiper-button-prev:hover,
+.swiper-button-next:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
 }
