@@ -11,34 +11,23 @@ html {
 .swiper {
     width: 100%;
     height: auto;
+    min-height: 200px;
 }
 
 .swiper-slide img,
 .swiper-slide iframe {
     width: 256px;
-    height: 192px;
-    object-fit: cover;
-    border-radius: 0.5rem;
-    display: block;
-    margin: 0 auto;
+    height: 144px;
+    max-width: 100%;
 }
 
-.swiper-button-prev,
-.swiper-button-next {
-    display: flex;
+#imageModal {
+    display: none;
     align-items: center;
     justify-content: center;
-    background-color: rgba(255, 255, 255, 0.8);
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    color: black;
-    font-size: 18px;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: opacity ease-in-out;
 }
 
-.swiper-button-prev:hover,
-.swiper-button-next:hover {
-    background-color: rgba(0, 0, 0, 0.8);
-    color: white;
+#imageModal.flex {
+    display: flex;
 }

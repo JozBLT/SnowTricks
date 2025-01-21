@@ -3,120 +3,225 @@
 {% block title "Édition de Tricks : " ~ tricks.title %}
 
 {% block body %}
-    <div class="example-wrapper">
-        <h1>Modifications</h1>
 
-        {{ form_start(editForm) }}
-
-        <div>
-            {{ form_label(editForm.title) }}
-            {{ form_widget(editForm.title) }}
-            {{ form_errors(editForm.title) }}
-        </div>
-
-        {% if tricks.thumbnail %}
-            <img src="{{ vich_uploader_asset(tricks, 'thumbnailFile') }}" alt="preview" style="width: 80rem;">
-        {% endif %}
-
-        <div>
-            {{ form_label(editForm.thumbnailFile) }}
-            {{ form_widget(editForm.thumbnailFile) }}
-            {{ form_errors(editForm.thumbnailFile) }}
-        </div>
-
-        <div>
-            {{ form_label(editForm.content) }}
-            {{ form_widget(editForm.content) }}
-            {{ form_errors(editForm.content) }}
-        </div>
-
-        <div>
-            <label>Images secondaires</label>
-            <ul id="tricks-images-list" data-prototype="{{ form_widget(editForm.images.vars.prototype)|e }}">
-                {% for image in tricks.images %}
-                    <li>
-                        <img src="{{ vich_uploader_asset(image, 'imageFile') }}" alt="Image de la galerie" width="150">
-                        <input type="file" name="existing_images_replace[{{ image.id }}]" />
-                        <label>
-                            <input type="checkbox" name="existing_images_delete[{{ image.id }}]" />
-                        </label> Supprimer
-                    </li>
-                {% endfor %}
-                {% for image in editForm.images %}
-                    <li>{{ form_widget(image) }}</li>
-                {% endfor %}
-            </ul>
-            <button type="button" class="btn btn-sm btn-success" id="add-image-btn">Ajouter une image</button>
-        </div>
-
-        <div>
-            <label>Vidéos</label>
-            <ul id="tricks-videos-list" data-prototype="{{ form_widget(editForm.videos.vars.prototype)|e }}">
-                {% for video in tricks.videos %}
-                    <li>
-                        <div class="video-wrapper">
-                            {% if 'youtube.com' in video.videoLink %}
-                                {% set youtubeId = video.videoLink|split('v=')[1] %}
-                                <iframe width="560" height="315"
-                                        src="https://www.youtube.com/embed/{{ youtubeId }}"
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                        allowfullscreen></iframe>
-                            {% elseif 'dailymotion.com' in video.videoLink %}
-                                {% set dailymotionId = video.videoLink|split('/')|last %}
-                                <iframe width="560" height="315"
-                                        src="https://www.dailymotion.com/embed/video/{{ dailymotionId }}"
-                                        allowfullscreen></iframe>
-                            {% else %}
-                                <p>Le format de la vidéo n'est pas supporté.</p>
-                            {% endif %}
-                            <label> Éditer
-                                <input type="text" name="existing_videos_replace[{{ video.id }}]" value="{{ video.videoLink }}" />
-                            </label>
-                            <label>
-                                <input type="checkbox" name="existing_videos_delete[{{ video.id }}]" />
-                            </label> Supprimer
-                        </div>
-                    </li>
-                {% endfor %}
-                {% for video in editForm.videos %}
-                    <li>{{ form_widget(video) }}</li>
-                {% endfor %}
-            </ul>
-            <button type="button" class="btn btn-sm btn-success" id="add-video-btn">Ajouter une vidéo</button>
-        </div>
-
-        {{ form_end(editForm) }}
+    <div class="px-8 py-4 flex flex-col items-center">
+        <h1 class="text-2xl font-bold">Édition de Tricks</h1>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            let imageCollectionHolder = document.querySelector('#tricks-images-list');
-            let addImageBtn = document.querySelector('#add-image-btn');
+    <!-- Title -->
+    <div class="px-8 py-4 flex flex-col items-center">
+        <div class="w-6/12 text-center">
+            {{ form_start(editForm, {'attr': {'class': 'space-y-6'}}) }}
+            <div>
+                {{ form_widget(editForm.title, {
+                    'attr': {
+                        'class': 'block w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
+                        'placeholder': 'Titre du Trick'
+                    }
+                }) }}
+            </div>
+        </div>
+    </div>
 
-            addImageBtn.addEventListener('click', function () {
-                let prototype = imageCollectionHolder.dataset.prototype;
-                let index = imageCollectionHolder.children.length;
-                let newForm = prototype.replace(/__name__/g, index);
-                let newFormLi = document.createElement('li');
-                newFormLi.innerHTML = newForm;
-                imageCollectionHolder.appendChild(newFormLi);
-            });
+    <div class="mx-2 md:mx-60 mb-5 bg-white border border-gray-200 shadow-md rounded-lg">
 
-            let videoCollectionHolder = document.querySelector('#tricks-videos-list');
-            let addVideoBtn = document.querySelector('#add-video-btn');
+        <!-- Thumbnail -->
+        <div class="relative w-full">
+            {% if tricks.thumbnail %}
+                <img src="{{ vich_uploader_asset(tricks, 'thumbnailFile') }}" alt="Image principale"
+                     id="thumbnail-preview" class="w-full rounded-t-lg object-cover">
+            {% else %}
+                <img src="{{ asset('images/creative_snowboard_1.jpg') }}" alt="Alternative image"
+                     id="thumbnail-preview" class="w-full rounded-t-lg object-cover">
+            {% endif %}
 
-            addVideoBtn.addEventListener('click', function () {
-                let prototype = videoCollectionHolder.dataset.prototype;
-                let index = videoCollectionHolder.children.length;
-                let newForm = prototype.replace(/__name__/g, index);
-                let newFormLi = document.createElement('li');
-                newFormLi.innerHTML = newForm;
-                videoCollectionHolder.appendChild(newFormLi);
-            });
-        });
-    </script>
-{% endblock %}
+            <!-- Editing Icons -->
+            <div class="absolute top-4 right-4 flex space-x-2">
+                <!-- Edit button -->
+                <label class="text-blue-500 hover:text-blue-600 cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828zM3 17a1 1 0 001 1h12a1 1 0 100-2H4a1 1 0 00-1 1z"></path>
+                    </svg>
+                    <input id="thumbnail-replace" type="file" name="existing_thumbnail_replace" class="hidden">
+                </label>
+                <!-- Delete Button -->
+                <label id="thumbnail-delete-btn" class="text-red-500 hover:text-red-600 cursor-pointer hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M9 3H15V4H20V6H4V4H9V3ZM5 8V19C5 20.1 5.9 21 7 21H17C18.1 21 19 20.1 19 19V8H5ZM8 10H10V18H8V10ZM14 10H16V18H14V10Z"></path>
+                    </svg>
+                    <input id="thumbnail-delete" type="checkbox" name="existing_thumbnail_delete" class="hidden">
+                </label>
+            </div>
+        </div>
 
-{% block javascripts %}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Sliders -->
+        <div class="flex flex-col md:flex-row justify-between items-start gap-6 p-8">
+
+            <!-- Images Slider -->
+            <div id="carouselImages" class="swiper pb-8 mx-auto relative">
+                <!-- Fake position for image -->
+                <div class="swiper-slide flex flex-col items-center mb-4 cursor-pointer border-2 border-dashed border-gray-500 rounded-lg h-32">
+                    <label class="w-full h-full flex flex-col items-center justify-center text-gray-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path>
+                        </svg>
+                        <input type="file" id="add-image-input" class="hidden">
+                    </label>
+                </div>
+                <div class="swiper-wrapper">
+                    {% for image in tricks.images %}
+                        <div class="swiper-slide flex flex-col items-center relative">
+                            <div class="relative">
+                                <div class="absolute inset-0 bg-black bg-opacity-50 hidden pointer-events-none"
+                                     id="overlay-image-{{ image.id }}">
+                                </div>
+                                <img src="{{ vich_uploader_asset(image, 'imageFile') }}"
+                                     alt="Image secondaire" id="slider-image-{{ image.id }}"
+                                     class="rounded-lg object-cover">
+                            </div>
+
+                            <!-- Editing Icons -->
+                            <div class="flex justify-center space-x-2 mt-2 relative z-10">
+                                <!-- Edit button -->
+                                <label class="text-blue-500 hover:text-blue-600 cursor-pointer">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828zM3 17a1 1 0 001 1h12a1 1 0 100-2H4a1 1 0 00-1 1z"></path>
+                                    </svg>
+                                    <input id="image-replace-{{ image.id }}" type="file" name="existing_images_replace[{{ image.id }}]" class="hidden">
+                                </label>
+                                <!-- Delete Button -->
+                                <label class="text-red-500 hover:text-red-600 cursor-pointer">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M9 3H15V4H20V6H4V4H9V3ZM5 8V19C5 20.1 5.9 21 7 21H17C18.1 21 19 20.1 19 19V8H5ZM8 10H10V18H8V10ZM14 10H16V18H14V10Z"></path>
+                                    </svg>
+                                    <input id="image-delete-{{ image.id }}" type="checkbox" name="existing_images_delete[{{ image.id }}]" class="hidden" data-overlay="overlay-image-{{ image.id }}">
+                                </label>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="swiper-pagination"></div>
+            </div>
+
+            <!-- Videos Slider -->
+            <div id="carouselVideos" class="swiper pb-8 mx-auto relative">
+                <!-- Fake position for video -->
+                <div class="swiper-slide flex flex-col items-center mb-4 cursor-pointer border-2 border-dashed border-gray-500 rounded-lg h-32">
+                    <label id="openAddVideoModal" class="w-full h-full flex flex-col items-center justify-center text-gray-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path>
+                        </svg>
+                    </label>
+                </div>
+                <div class="swiper-wrapper">
+                    {% for video in tricks.videos %}
+                        <div class="swiper-slide flex flex-col items-center relative">
+                            <div class="relative">
+                                <div class="absolute inset-0 bg-black bg-opacity-50 hidden pointer-events-none" id="overlay-video-{{ video.id }}"></div>
+                                {% if 'youtube.com' in video.videoLink %}
+                                    {% set youtubeId = video.videoLink|split('v=')[1] %}
+                                    <iframe id="video-iframe-{{ video.id }}" class="rounded-lg w-64 h-48"
+                                            src="https://www.youtube.com/embed/{{ youtubeId }}" allowfullscreen></iframe>
+                                {% elseif 'dailymotion.com' in video.videoLink %}
+                                    {% set dailymotionId = video.videoLink|split('/')|last %}
+                                    <iframe id="video-iframe-{{ video.id }}" class="rounded-lg w-64 h-48"
+                                            src="https://www.dailymotion.com/embed/video/{{ dailymotionId }}" allowfullscreen></iframe>
+                                {% else %}
+                                    <p id="video-placeholder-{{ video.id }}">Vidéo non supportée</p>
+                                {% endif %}
+                            </div>
+
+                            <!-- Editing Icons -->
+                            <div class="flex justify-center space-x-2 mt-2 relative z-10">
+                                <!-- Edit button -->
+                                <label class="text-blue-500 hover:text-blue-600 cursor-pointer edit-video-icon" data-video-id="{{ video.id }}" data-video-link="{{ video.videoLink }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828zM3 17a1 1 0 001 1h12a1 1 0 100-2H4a1 1 0 00-1 1z"></path>
+                                    </svg>
+                                </label>
+                                <!-- Delete Button -->
+                                <label class="text-red-500 hover:text-red-600 cursor-pointer">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M9 3H15V4H20V6H4V4H9V3ZM5 8V19C5 20.1 5.9 21 7 21H17C18.1 21 19 20.1 19 19V8H5ZM8 10H10V18H8V10ZM14 10H16V18H14V10Z"></path>
+                                    </svg>
+                                    <input id="video-delete-{{ video.id }}" type="checkbox" name="existing_videos_delete[{{ video.id }}]" class="hidden" data-overlay="overlay-video-{{ video.id }}">
+                                </label>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="swiper-pagination"></div>
+            </div>
+
+            <!-- Add Video Modal -->
+            <div id="addVideoModal" class="fixed inset-0 items-center justify-center bg-black bg-opacity-50 hidden z-50">
+                <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+                    <h2 class="text-lg font-bold mb-4">Ajouter une vidéo</h2>
+                    <label for="video-link" class="block text-sm font-medium text-gray-700">Lien de la vidéo</label>
+                    <input id="video-link" type="text" placeholder="Entrez le lien YouTube ou Dailymotion"
+                           class="block w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-4">
+
+                    <div class="flex justify-end space-x-4">
+                        <button id="cancelAddVideo"
+                                class="px-4 py-2 bg-gray-500 text-white font-semibold rounded-lg hover:bg-gray-600">
+                            Annuler
+                        </button>
+                        <button id="confirmAddVideo"
+                                class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600">
+                            Ajouter
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- Edit Video Modal -->
+            <div id="editVideoModal" class="fixed inset-0 items-center justify-center bg-black bg-opacity-50 hidden z-50">
+                <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+                    <h2 class="text-lg font-bold mb-4">Modifier la vidéo</h2>
+                    <label for="edit-video-link" class="block text-sm font-medium text-gray-700">Nouveau lien de la vidéo</label>
+                    <input id="edit-video-link" type="text" placeholder="Entrez le nouveau lien YouTube ou Dailymotion"
+                           class="block w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-4">
+
+                    <div class="flex justify-end space-x-4">
+                        <button id="cancelEditVideo"
+                                class="px-4 py-2 bg-gray-500 text-white font-semibold rounded-lg hover:bg-gray-600">
+                            Annuler
+                        </button>
+                        <button id="confirmEditVideo"
+                                class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600">
+                            Modifier
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="px-8 py-4 flex flex-col items-center">
+            {{ form_widget(editForm.content, {
+                'attr': {
+                    'class': 'block w-11/12 h-64 px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none',
+                    'placeholder': 'Écrivez ici...'
+                }
+            }) }}
+            <!-- Validation/Delete -->
+            <div class="flex justify-end w-full mt-4 space-x-4">
+                <div>
+                    {{ form_widget(editForm.save, {
+                        'attr': {
+                            'class': 'px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600'
+                        }
+                    }) }}
+                </div>
+                {{ form_end(editForm) }}
+                <div>
+                    <form action="{{ path('tricks.delete', {id: tricks.id}) }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce tricks ?');">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="submit" class="px-4 py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600">
+                            Supprimer
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

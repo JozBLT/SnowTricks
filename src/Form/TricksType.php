@@ -22,10 +22,6 @@ class TricksType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('thumbnailFile', FileType::class, [
-                'label' => 'Image à la Une',
-                'required' => false,
-            ])
             ->add('title', TextType::class, [
                 'label' => 'Titre',
                 'empty_data' => '',
@@ -33,7 +29,6 @@ class TricksType extends AbstractType
             ->add('content', TextareaType::class, [
                 'label' => 'Contenu',
                 'empty_data' => '',
-                'attr' => ['class' => 'tinymce', 'rows' => 10],
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'Envoyer',
@@ -76,6 +71,7 @@ class TricksType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Tricks::class,
+            'show_thumbnail_field' => true,
         ]);
     }
 
