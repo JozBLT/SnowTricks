@@ -2,12 +2,12 @@
 
 namespace App\Controller;
 
-use App\Entity\Comments;
 use App\Entity\Images;
 use App\Entity\Tricks;
 use App\Entity\Videos;
 use App\Form\CommentsType;
 use App\Form\TricksType;
+use App\Repository\CommentsRepository;
 use App\Repository\TricksRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -26,19 +26,23 @@ class TricksController extends AbstractController
         requirements: ['slug' => '[a-z0-9-]+', 'id' => Requirement::DIGITS],
         methods: ['GET']
     )]
-    public function show(string $slug, int $id, TricksRepository $tricksRepository): Response
-    {
+    public function show(
+        string $slug,
+        int $id,
+        TricksRepository $tricksRepository,
+        CommentsRepository $commentsRepository
+    ): Response {
         $tricks = $tricksRepository->find($id);
 
         if ($tricks->getSlug() !== $slug) {
             return $this->redirectToRoute('tricks.show', ['slug' => $tricks->getSlug(), 'id' => $tricks->getId()]);
         }
-
-        $comment = new Comments();
-        $commentForm = $this->createForm(CommentsType::class, $comment);
+        $comments = $commentsRepository->findBy(['tricks' => $tricks], ['createdAt' => 'ASC'], 5);
+        $commentForm = $this->createForm(CommentsType::class);
 
         return $this->render('tricks/show.html.twig', [
             'tricks' => $tricks,
+            'comments' => $comments,
             'commentForm' => $commentForm->createView(),
         ]);
     }
@@ -53,6 +57,12 @@ class TricksController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $tricks->setCreatedBy($this->getUser());
+
+            if ($request->files->get('existing_thumbnail_replace')) {
+                $thumbnailFile = $request->files->get('existing_thumbnail_replace');
+                $tricks->setThumbnailFile($thumbnailFile);
+            }
+
             $this->addMedia($form->get('images')->getData(), $tricks, $entityManager, 'image');
             $this->addMedia($form->get('videos')->getData(), $tricks, $entityManager, 'video');
 
@@ -83,22 +93,35 @@ class TricksController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($request->files->get('existing_thumbnail_replace')) {
+                $thumbnailFile = $request->files->get('existing_thumbnail_replace');
+                $tricks->setThumbnailFile($thumbnailFile);
+            }
+
+            if ($request->get('existing_thumbnail_delete')) {
+                $thumbnailPath = $this->getParameter('kernel.project_dir') . '/public/tricks/thumbnail/' . $tricks->getThumbnail();
+                if (file_exists($thumbnailPath)) {
+                    unlink($thumbnailPath);
+                }
+                $tricks->setThumbnail(null);
+            }
+
             $this->handleImageModifications($request, $tricks, $entityManager);
             $this->handleVideoModifications($request, $tricks, $entityManager);
             $this->addMedia($form->get('images')->getData(), $tricks, $entityManager, 'image');
             $this->addMedia($form->get('videos')->getData(), $tricks, $entityManager, 'video');
             $entityManager->flush();
-            $this->addFlash('success', 'Ce tricks a bien été modifié !');
+            $this->addFlash('success', 'Le trick a été mis à jour avec succès.');
 
             return $this->redirectToRoute('tricks.show', [
+                'id' => $tricks->getId(),
                 'slug' => $tricks->getSlug(),
-                'id' => $tricks->getId()
             ]);
         }
 
         return $this->render('tricks/edit.html.twig', [
             'tricks' => $tricks,
-            'editForm' => $form
+            'editForm' => $form->createView(),
         ]);
     }
 
@@ -124,21 +147,6 @@ class TricksController extends AbstractController
         return $this->redirectToRoute('homepage');
     }
 
-    private function cleanVideoLink(string $link): string
-    {
-        if (str_contains($link, 'youtube.com')) {
-            parse_str(parse_url($link, PHP_URL_QUERY), $query);
-            return isset($query['v']) ? 'https://www.youtube.com/watch?v=' . $query['v'] : $link;
-        }
-
-        if (str_contains($link, 'dailymotion.com')) {
-            preg_match('/\/video\/([^_]+)/', $link, $matches);
-            return isset($matches[1]) ? 'https://www.dailymotion.com/video/' . $matches[1] : $link;
-        }
-
-        return $link;
-    }
-
     private function addMedia(array $newMedia, Tricks $tricks, EntityManagerInterface $entityManager, string $type): void
     {
         foreach ($newMedia as $mediaFile) {
@@ -148,9 +156,8 @@ class TricksController extends AbstractController
                 $tricks->addImage($image);
                 $entityManager->persist($image);
             } elseif ($type === 'video' && !empty($mediaFile)) {
-                $cleanedLink = $this->cleanVideoLink($mediaFile);
                 $video = new Videos();
-                $video->setVideoLink($cleanedLink);
+                $video->setVideoLink($mediaFile);
                 $tricks->addVideo($video);
                 $entityManager->persist($video);
             }
@@ -204,8 +211,7 @@ class TricksController extends AbstractController
             }
 
             if (isset($replaceVideos[$video->getId()])) {
-                $cleanedLink = $this->cleanVideoLink($replaceVideos[$video->getId()]);
-                $video->setVideoLink($cleanedLink);
+                $video->setVideoLink($replaceVideos[$video->getId()]);
             }
         }
     }

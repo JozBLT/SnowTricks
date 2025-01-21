@@ -1,3 +1,33 @@
-body {
-    background-color: skyblue;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Smooth Scroll */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Swiper Slider */
+.swiper {
+    width: 100%;
+    height: auto;
+    min-height: 200px;
+}
+
+.swiper-slide img,
+.swiper-slide iframe {
+    width: 256px;
+    height: 144px;
+    max-width: 100%;
+}
+
+#imageModal {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: opacity ease-in-out;
+}
+
+#imageModal.flex {
+    display: flex;
 }

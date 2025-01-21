@@ -1,58 +1,111 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>{% block title "SnowTricks" %}</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-          crossorigin="anonymous">
-    {% block stylesheets %}
-    {% endblock %}
+    <head>
+        <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title "SnowTricks" %}</title>
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('app') }}
+        {% endblock %}
+        {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+        {% endblock %}
+    </head>
+    <body class="flex flex-col min-h-screen">
+        <nav class="bg-blue-500">
+            <div class="px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <!-- Logo -->
+                    <div class="flex-shrink-0">
+                        <a href="{{ path('homepage') }}" class="text-white text-xl font-bold">SnowTricks</a>
+                    </div>
 
-    {% block javascripts %}
-        {% block importmap %}{{ importmap('app') }}{% endblock %}
-    {% endblock %}
-</head>
-<body>
-<nav class="navbar bg-primary navbar-expand-lg" data-bs-theme="dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="{{ path('homepage') }}">SnowTricks</a>
-        <div class="collapse navbar-collapse">
-            {% if app.user %}
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('logout') }}">Déconnexion</a>
-                    </li>
-                </ul>
-                {% if not app.user.isVerified %}
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item d-flex align-items-center">
-                            <p class="mb-0 me-2">Votre compte n'est pas encore validé</p>
-                            <a class="btn btn-link p-0" href="{{ path('resend_verification_email') }}">
-                                Renvoyer l'email de confirmation
-                            </a>
-                        </li>
-                    </ul>
-                {% endif %}
-            {% else %}
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link {{ app.current_route == 'register' ? 'active' : '' }}"
-                           href="{{ path('register') }}">Inscription</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ app.current_route == 'login' ? 'active' : '' }}"
-                           href="{{ path('login') }}">Connexion</a>
-                    </li>
-                </ul>
-            {% endif %}
-        </div>
-    </div>
-</nav>
-<div class="container my-4">
-    {% include 'partials/flash.html.twig' %}
-    {% block body %}{% endblock %}
-</div>
-</body>
+                    <!-- Bouton Menu Burger -->
+                    <div class="flex sm:hidden gap-4">
+                        {% if app.user and not app.user.isVerified %}
+                            <div class="text-white text-sm">
+                                <p>Compte non validé</p>
+                                <a href="{{ path('resend_verification_email') }}" class="underline">Renvoyer l'email</a>
+                            </div>
+                        {% endif %}
+                        <button id="menu-toggle" type="button" class="inline-flex items-center justify-center p-2 rounded-md text-white hover:text-gray-200 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-blue-500 focus:ring-white">
+                            <!-- Icône burger -->
+                            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Menu principal -->
+                    <div id="menu" class="hidden sm:flex sm:items-center sm:space-x-4 gap-4">
+                        {% if app.user and not app.user.isVerified %}
+                            <div class="text-white text-sm">
+                                <p>Compte non validé</p>
+                                <a href="{{ path('resend_verification_email') }}" class="underline">Renvoyer l'email</a>
+                            </div>
+                        {% endif %}
+                        <a href="{{ path('homepage') }}" class="text-white">Accueil</a>
+                        {% if app.user %}
+                            <a href="{{ path('logout') }}" class="text-white">Déconnexion</a>
+                        {% else %}
+                            <a href="{{ path('register') }}" class="text-white">Inscription</a>
+                            <a href="{{ path('login') }}" class="text-white">Connexion</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Menu mobile (dropdown) -->
+            <div id="mobile-menu" class="sm:hidden hidden">
+                <div class="px-2 pt-2 pb-3 space-y-1">
+                    <a href="{{ path('homepage') }}" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-blue-600">Accueil</a>
+                    {% if app.user %}
+                        <a href="{{ path('logout') }}" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-blue-600">Déconnexion</a>
+                    {% else %}
+                        <a href="{{ path('register') }}" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-blue-600">Inscription</a>
+                        <a href="{{ path('login') }}" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-blue-600">Connexion</a>
+                    {% endif %}
+                </div>
+            </div>
+        </nav>
+
+        <main class="flex-grow relative">
+            {% include 'partials/flash.html.twig' %}
+            {% block body %}{% endblock %}
+        </main>
+
+        <footer class="bg-gray-800 text-white mt-4 py-6">
+            <div class="container mx-auto px-4">
+                <div class="flex items-center justify-center space-x-6">
+                    <hr class="flex-grow border-gray-600">
+                    <a href="https://github.com/JozBLT" target="_blank" class="text-white hover:text-gray-400">
+                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.302 3.438 9.8 8.205 11.387.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.757-1.333-1.757-1.09-.745.084-.729.084-.729 1.205.084 1.84 1.237 1.84 1.237 1.07 1.835 2.809 1.305 3.495.998.107-.775.418-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.52.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.4 3-.405 1.02.005 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.657.24 2.874.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.435.375.825 1.11.825 2.235 0 1.615-.015 2.915-.015 3.315 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path>
+                        </svg>
+                    </a>
+                    <a href="https://linkedin.com/in/tonprofilLinkedIn" target="_blank" class="text-white hover:text-gray-400">
+                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.761 0 5-2.239 5-5v-14c0-2.761-2.239-5-5-5zm-11.5 19h-3v-11h3v11zm-1.5-12.27c-1.019 0-1.5-.665-1.5-1.493 0-.83.487-1.5 1.497-1.5s1.5.67 1.5 1.5c0 .83-.478 1.493-1.497 1.493zm13 12.27h-3v-5.604c0-1.41-.028-3.226-1.967-3.226-1.97 0-2.273 1.54-2.273 3.126v5.704h-3v-11h2.869v1.478h.041c.4-.758 1.377-1.56 2.832-1.56 3.027 0 3.586 1.993 3.586 4.584v6.498z"></path>
+                        </svg>
+                    </a>
+                    <hr class="flex-grow border-gray-600">
+                </div>
+                <!-- Copyright -->
+                <div class="text-center mt-4">
+                    <p class="text-sm">&copy; 2025 JozBLT. Tous droits réservés.</p>
+                </div>
+            </div>
+        </footer>
+    </body>
 </html>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        if (menuToggle && mobileMenu) {
+            menuToggle.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+    });
+</script>
