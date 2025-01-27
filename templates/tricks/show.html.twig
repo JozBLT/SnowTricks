@@ -7,7 +7,7 @@
     <div class="px-8 py-4 flex flex-col items-center"  id="tricks-classic-view">
         <h1 class="text-center">{{ tricks.title | nl2br }}</h1>
     </div>
-    <div class="mx-2 md:mx-60 mb-5 bg-white border border-gray-200 shadow-md rounded-lg">
+    <div class="mx-auto max-w-screen-lg 2xl:max-w-[70%] mb-5 bg-white border border-gray-200 shadow-md rounded-lg">
 
         <!-- Thumbnail -->
         <div class="relative w-full">
@@ -96,7 +96,7 @@
         <!-- Tricks Content -->
         <div class="px-2 md:px-8 py-4 flex flex-col items-center">
             <p class="leading-relaxed md:w-11/12 text-center">{{ tricks.content | nl2br }}</p>
-            <div class="flex justify-center items-center gap-4 mt-4">
+            <div class="grid sm:flex justify-center items-center gap-4 mt-4">
                 <p><span class="underline">Auteur</span> : {{ tricks.createdBy ? tricks.createdBy.username : 'Utilisateur supprimé' }}</p>
                 <p><span class="underline">Créé le</span> : {{ tricks.createdAt|date('d/m/Y') }}</p>
                 {% if tricks.updatedAt > tricks.createdAt %}

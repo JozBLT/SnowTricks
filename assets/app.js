@@ -117,8 +117,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!container) return;
 
         new Swiper(`#${containerId}`, {
-            slidesPerView: 3,
+            slidesPerView: 1,
             spaceBetween: 10,
+            keyboard: {
+                enabled: true,
+            },
+            rewind: true,
             loop: false,
             loopAdditionalSlides: true,
             centerInsufficientSlides: true,
