@@ -7,7 +7,7 @@
         <h1 class="text-2xl font-bold">Création de Tricks</h1>
     </div>
 
-    <div class="mx-2 md:mx-60 mb-5 bg-white border border-gray-200 shadow-md rounded-lg">
+    <div class="mx-auto max-w-screen-lg 2xl:max-w-[70%] mb-5 bg-white border border-gray-200 shadow-md rounded-lg">
         {{ form_start(createForm, {'attr': {'class': 'space-y-6 px-8 py-4'}}) }}
 
         <!-- Title -->
@@ -62,6 +62,7 @@
                 <!-- Fake position for image -->
                 <div class="swiper-slide flex flex-col items-center mb-4 cursor-pointer border-2 border-dashed border-gray-500 rounded-lg h-32">
                     <label class="w-full h-full flex flex-col items-center justify-center text-gray-500">
+                        <p>Ajouter</p>
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path>
                         </svg>

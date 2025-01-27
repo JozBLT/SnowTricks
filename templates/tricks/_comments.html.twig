@@ -22,11 +22,11 @@
 
 <div class="text-center">
     {% if comments|length > 0 %}
-        <ul class="space-y-4">
+        <ul class="space-y-4 w-full lg:w-1/2 mx-auto">
             {% for comment in comments %}
-                <li class="border border-gray-300 rounded-lg p-4 shadow-sm md:w-2/5 mx-auto">
+                <li class="border border-gray-300 rounded-lg p-4 shadow-sm">
                     <span class="font-bold">{{ comment.author ? comment.author.username : 'Utilisateur inconnu' }} :</span>
-                    <span class="text-gray-700">{{ comment.content }}</span>
+                    <p class="text-gray-700" style="word-break: break-word;">{{ comment.content }}</p>
                     <p class="text-sm text-gray-500 mt-1">Posté le {{ comment.createdAt|date('d/m/Y') }}</p>
                 </li>
             {% endfor %}
