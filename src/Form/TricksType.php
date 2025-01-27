@@ -2,8 +2,10 @@
 
 namespace App\Form;
 
+use App\Entity\Categories;
 use App\Entity\Tricks;
 use DateTimeImmutable;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Event\PostSubmitEvent;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -29,6 +31,12 @@ class TricksType extends AbstractType
             ->add('content', TextareaType::class, [
                 'label' => 'Contenu',
                 'empty_data' => '',
+            ])->add('category', EntityType::class, [
+                'class' => Categories::class,
+                'choice_label' => 'name',
+                'placeholder' => 'Catégorie',
+                'required' => false,
+                'label' => 'Catégorie',
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'Envoyer',
