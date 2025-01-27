@@ -96,8 +96,9 @@
         <!-- Tricks Content -->
         <div class="px-2 md:px-8 py-4 flex flex-col items-center">
             <p class="leading-relaxed md:w-11/12 text-center">{{ tricks.content | nl2br }}</p>
-            <div class="grid sm:flex justify-center items-center gap-4 mt-4">
+            <div class="grid md:flex justify-center items-center gap-4 mt-4">
                 <p><span class="underline">Auteur</span> : {{ tricks.createdBy ? tricks.createdBy.username : 'Utilisateur supprimé' }}</p>
+                <p><span class="underline">Catégorie</span> : {{ tricks.category.name }}</p>
                 <p><span class="underline">Créé le</span> : {{ tricks.createdAt|date('d/m/Y') }}</p>
                 {% if tricks.updatedAt > tricks.createdAt %}
                     <p><span class="underline">Dernière modification</span> : {{ tricks.updatedAt|date('d/m/Y') }}</p>

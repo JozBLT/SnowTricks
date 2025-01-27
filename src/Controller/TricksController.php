@@ -23,7 +23,7 @@ class TricksController extends AbstractController
 {
     #[Route('/tricks/{slug}-{id}',
         name: 'tricks.show',
-        requirements: ['slug' => '[a-z0-9-]+', 'id' => Requirement::DIGITS],
+        requirements: ['slug' => Requirement::ASCII_SLUG, 'id' => Requirement::DIGITS],
         methods: ['GET']
     )]
     public function show(

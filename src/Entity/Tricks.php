@@ -76,6 +76,10 @@ class Tricks
     #[ORM\OneToMany(targetEntity: Comments::class, mappedBy: 'tricks', orphanRemoval: true)]
     private Collection $comments;
 
+    #[ORM\ManyToOne(targetEntity: Categories::class, inversedBy: 'tricks')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?Categories $category = null;
+
     public function __construct()
     {
         $this->images = new ArrayCollection();
@@ -270,6 +274,18 @@ class Tricks
                 $comment->setTricks(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCategory(): ?Categories
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Categories $category): static
+    {
+        $this->category = $category;
 
         return $this;
     }
