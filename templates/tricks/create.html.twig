@@ -10,24 +10,13 @@
     <div class="mx-auto max-w-screen-lg 2xl:max-w-[70%] mb-5 bg-white border border-gray-200 shadow-md rounded-lg">
         {{ form_start(createForm, {'attr': {'class': 'space-y-6 px-8 py-4'}}) }}
 
-        <div class="w-full px-8 py-4 sm:flex justify-between">
-            <!-- Title -->
-            <div class="w-full sm:w-6/12">
-                {{ form_start(createForm, {'attr': {'class': 'space-y-6'}}) }}
-                <div>
-                    {{ form_widget(createForm.title, {
-                        'attr': {
-                            'class': 'block w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
-                            'placeholder': 'Titre du Trick'
-                        }
-                    }) }}
-                </div>
-            </div>
-            <!-- Category -->
-            <div class="w-4/12">
-                {{ form_widget(createForm.category, {
+        <!-- Title -->
+        <div class="px-8 py-4 flex flex-col items-center">
+            <div class="w-11/12 text-center">
+                {{ form_widget(createForm.title, {
                     'attr': {
                         'class': 'block w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
+                        'placeholder': 'Titre du Trick'
                     }
                 }) }}
             </div>
@@ -36,7 +25,7 @@
         <!-- Thumbnail -->
         <div class="relative w-full">
             <img src="{{ asset('images/creative_snowboard_1.jpg') }}" alt="Alternative image"
-                 id="thumbnail-preview" class="w-full rounded-t-lg object-cover">
+                 id="thumbnail-preview" class="w-full rounded-lg object-cover">
 
             <!-- Editing Icons -->
             <div class="absolute top-4 right-4 flex space-x-2">
@@ -54,6 +43,18 @@
                     </svg>
                     <input id="thumbnail-delete" type="checkbox" name="existing_thumbnail_delete" class="hidden">
                 </label>
+            </div>
+        </div>
+
+        <!-- Category -->
+        <div class="flex items-center px-8 py-4 gap-4">
+            <h2 class="text-xl">Catégorie :</h2>
+            <div class="w-6/12">
+                {{ form_widget(createForm.category, {
+                    'attr': {
+                        'class': 'block w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
+                    }
+                }) }}
             </div>
         </div>
 
