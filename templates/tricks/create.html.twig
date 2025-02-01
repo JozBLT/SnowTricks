@@ -1,0 +1,140 @@
+{% extends 'base.html.twig' %}
+
+{% block title "Créer un nouveau Trick" %}
+
+{% block body %}
+    <div class="px-8 py-4 flex flex-col items-center">
+        <h1 class="text-2xl font-bold">Création de Tricks</h1>
+    </div>
+
+    <div class="mx-auto max-w-screen-lg 2xl:max-w-[70%] mb-5 bg-white border border-gray-200 shadow-md rounded-lg">
+        {{ form_start(createForm, {'attr': {'class': 'space-y-6 px-8 py-4'}}) }}
+
+        <!-- Title -->
+        <div class="px-8 py-4 flex flex-col items-center">
+            <div class="w-11/12 text-center">
+                {{ form_widget(createForm.title, {
+                    'attr': {
+                        'class': 'block w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
+                        'placeholder': 'Titre du Trick'
+                    }
+                }) }}
+            </div>
+        </div>
+
+        <!-- Thumbnail -->
+        <div class="relative w-full">
+            <img src="{{ asset('images/creative_snowboard_1.jpg') }}" alt="Alternative image"
+                 id="thumbnail-preview" class="w-full rounded-lg object-cover">
+
+            <!-- Editing Icons -->
+            <div class="absolute top-4 right-4 flex space-x-2">
+                <!-- Edit button -->
+                <label class="text-blue-500 hover:text-blue-600 cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828zM3 17a1 1 0 001 1h12a1 1 0 100-2H4a1 1 0 00-1 1z"></path>
+                    </svg>
+                    <input id="thumbnail-replace" type="file" name="existing_thumbnail_replace" class="hidden">
+                </label>
+                <!-- Delete Button -->
+                <label id="thumbnail-delete-btn" class="text-red-500 hover:text-red-600 cursor-pointer hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M9 3H15V4H20V6H4V4H9V3ZM5 8V19C5 20.1 5.9 21 7 21H17C18.1 21 19 20.1 19 19V8H5ZM8 10H10V18H8V10ZM14 10H16V18H14V10Z"></path>
+                    </svg>
+                    <input id="thumbnail-delete" type="checkbox" name="existing_thumbnail_delete" class="hidden">
+                </label>
+            </div>
+        </div>
+
+        <!-- Category -->
+        <div class="flex items-center px-8 py-4 gap-4">
+            <h2 class="text-xl">Catégorie :</h2>
+            <div class="w-6/12">
+                {{ form_widget(createForm.category, {
+                    'attr': {
+                        'class': 'block w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
+                    }
+                }) }}
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div>
+            {{ form_widget(createForm.content, {
+                'attr': {
+                    'class': 'block w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none',
+                    'placeholder': 'Description du Tricks',
+                    'rows': 6
+                }
+            }) }}
+        </div>
+
+        <!-- Images Slider -->
+        <div>
+            <h2 class="text-lg font-bold mb-2">Galerie d'images</h2>
+            <div id="carouselImages" class="swiper pb-8 mx-auto relative">
+                <!-- Fake position for image -->
+                <div class="swiper-slide flex flex-col items-center mb-4 cursor-pointer border-2 border-dashed border-gray-500 rounded-lg h-32">
+                    <label class="w-full h-full flex flex-col items-center justify-center text-gray-500">
+                        <p>Ajouter</p>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path>
+                        </svg>
+                        <input type="file" id="add-image-input" class="hidden">
+                    </label>
+                </div>
+                <div class="swiper-wrapper"></div>
+                <div class="swiper-pagination"></div>
+            </div>
+        </div>
+
+        <!-- Vidéo Slider -->
+        <div>
+            <h2 class="text-lg font-bold mb-2">Galerie de vidéos</h2>
+            <button id="openAddVideoModal"
+                    class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600">
+                Ajouter une vidéo
+            </button>
+            <div id="carouselVideos" class="swiper pb-8 mx-auto relative">
+                <div class="swiper-wrapper"></div>
+                <div class="swiper-pagination"></div>
+            </div>
+        </div>
+        <!-- Add Video Modal -->
+        <div id="addVideoModal" class="fixed inset-0 items-center justify-center bg-black bg-opacity-50 hidden z-50">
+            <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+                <h2 class="text-lg font-bold mb-4">Ajouter une vidéo</h2>
+                <label for="video-link" class="block text-sm font-medium text-gray-700">Lien de la vidéo</label>
+                <input id="video-link" type="text" placeholder="Entrez le lien YouTube ou Dailymotion"
+                       class="block w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-4">
+
+                <div class="flex justify-end space-x-4">
+                    <button id="cancelAddVideo"
+                            class="px-4 py-2 bg-gray-500 text-white font-semibold rounded-lg hover:bg-gray-600">
+                        Annuler
+                    </button>
+                    <button id="confirmAddVideo"
+                            class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600">
+                        Ajouter
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Validation/Cancel -->
+        <div class="flex justify-end space-x-4">
+            <div>
+                {{ form_widget(createForm.save, {
+                    'attr': {
+                        'class': 'px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600'
+                    }
+                }) }}
+            </div>
+            <a href="{{ path('homepage') }}" class="px-4 py-2 bg-gray-500 text-white font-semibold rounded-lg hover:bg-gray-600">
+                Annuler
+            </a>
+        </div>
+
+        {{ form_end(createForm) }}
+    </div>
+{% endblock %}

@@ -1,0 +1,126 @@
+{% extends 'base.html.twig' %}
+
+{% block title "Tricks : " ~ tricks.title %}
+
+{% block body %}
+    <!-- Title -->
+    <div class="px-8 py-4 flex flex-col items-center"  id="tricks-classic-view">
+        <h1 class="text-center">{{ tricks.title | nl2br }}</h1>
+    </div>
+    <div class="mx-auto max-w-screen-lg 2xl:max-w-[70%] mb-5 bg-white border border-gray-200 shadow-md rounded-lg">
+
+        <!-- Thumbnail -->
+        <div class="relative w-full">
+            {% if tricks.thumbnail %}
+                <img src="{{ vich_uploader_asset(tricks, 'thumbnailFile') }}"
+                     alt="preview" class="w-full rounded-t-lg object-cover">
+            {% else %}
+                <img src="{{ asset('images/creative_snowboard_1.jpg') }}"
+                     alt="alternative_preview" class="w-full rounded-t-lg object-cover">
+            {% endif %}
+
+            {% if app.user and app.user.isVerified %}
+                <!-- Editing Icons -->
+                <div class="absolute top-4 right-4 flex space-x-2">
+                    <!-- Edit button -->
+                    <a href="{{ path('tricks.edit', {id: tricks.id}) }}" class="text-blue-500 hover:text-blue-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828zM3 17a1 1 0 001 1h12a1 1 0 100-2H4a1 1 0 00-1 1z"></path>
+                        </svg>
+                    </a>
+                    <!-- Delete Button -->
+                    <form action="{{ path('tricks.delete', {id: tricks.id}) }}" method="post" onsubmit="return confirm('Êtes-vous sûr ?');">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="submit" class="text-red-500 hover:text-red-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M9 3H15V4H20V6H4V4H9V3ZM5 8V19C5 20.1 5.9 21 7 21H17C18.1 21 19 20.1 19 19V8H5ZM8 10H10V18H8V10ZM14 10H16V18H14V10Z"></path>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Sliders -->
+        <div class="flex flex-col md:flex-row justify-between items-start gap-8 p-8">
+            <!-- Images Slider -->
+            {% if tricks.images|length > 0 %}
+                <div id="carouselImages" class="swiper py-8 max-w-screen-lg mx-auto relative">
+                    <div class="swiper-wrapper">
+                        {% for image in tricks.images %}
+                            <div class="swiper-slide flex justify-center items-center">
+                                <img src="{{ vich_uploader_asset(image, 'imageFile') }}"
+                                     alt="Image secondaire" class="rounded-lg object-cover" data-modal-image>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="swiper-pagination"></div>
+                </div>
+            {% endif %}
+            <div id="imageModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-75">
+                <div class="relative">
+                    <button id="closeModal" class="absolute top-4 right-4 text-white text-3xl font-bold">&times;</button>
+                    <img id="modalImage" src="" alt="Image agrandie" class="rounded-lg max-h-screen object-contain">
+                </div>
+            </div>
+
+            <!-- Videos Slider -->
+            {% if tricks.videos|length > 0 %}
+                <div id="carouselVideos" class="swiper py-8 max-w-screen-lg mx-auto relative">
+                    <div class="swiper-wrapper">
+                        {% for video in tricks.videos %}
+                            <div class="swiper-slide flex justify-center items-center">
+                                {% if 'youtube.com' in video.videoLink %}
+                                    {% set youtubeId = video.videoLink|split('v=')[1] %}
+                                    <iframe class="rounded-lg w-64 h-48"
+                                            src="https://www.youtube.com/embed/{{ youtubeId }}"
+                                            allowfullscreen>
+                                    </iframe>
+                                {% elseif 'dailymotion.com' in video.videoLink %}
+                                    {% set dailymotionId = video.videoLink|split('/')|last %}
+                                    <iframe class="rounded-lg w-64 h-48"
+                                            src="https://www.dailymotion.com/embed/video/{{ dailymotionId }}"
+                                            allowfullscreen>
+                                    </iframe>
+                                {% else %}
+                                    <p>Vidéo non supportée</p>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="swiper-pagination"></div>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Tricks Content -->
+        <div class="px-2 md:px-8 py-4 flex flex-col items-center">
+            <p class="leading-relaxed md:w-11/12 text-center">{{ tricks.content | nl2br }}</p>
+            <div class="grid md:flex justify-center items-center gap-4 mt-4">
+                <p><span class="underline">Auteur</span> : {{ tricks.createdBy ? tricks.createdBy.username : 'Utilisateur supprimé' }}</p>
+                <p><span class="underline">Catégorie</span> : {{ tricks.category ? tricks.category.name : 'non-affilié' }}</p>
+                <p><span class="underline">Créé le</span> : {{ tricks.createdAt|date('d/m/Y') }}</p>
+                {% if tricks.updatedAt > tricks.createdAt %}
+                    <p><span class="underline">Dernière modification</span> : {{ tricks.updatedAt|date('d/m/Y') }}</p>
+                {% endif %}
+            </div>
+            <hr class="w-4/5 mt-8 border-t-2 border-gray-300">
+        </div>
+
+        <!-- Comments -->
+        <div id="comments-container" data-trick-id="{{ tricks.id }}">
+            <ul class="px-2 md:px-8 space-y-4">
+                {% include 'tricks/_comments.html.twig' with {'comments': comments, 'commentForm': commentForm} %}
+            </ul>
+        </div>
+
+        {% if comments|length > 0 %}
+            <div class="text-center my-4">
+                <button id="load-more-comments" data-offset="5" data-tricks-id="{{ tricks.id }}"
+                        class="bg-blue-500 text-white px-4 py-2 rounded text-sm hover:bg-blue-600">
+                    Afficher plus
+                </button>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
