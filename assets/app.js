@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const thumbnailReplaceInput = document.getElementById('thumbnail-replace');
     const thumbnailDeleteBtn = document.getElementById('thumbnail-delete-btn');
     const thumbnailDeleteInput = document.getElementById('thumbnail-delete');
-    const defaultThumbnailSrc = "/images/creative_snowboard_1.jpg";
+    const defaultThumbnailSrc = "/images/creative_snowboard_3.jpg";
     const updateDeleteButtonVisibility = () => {
         if (thumbnailPreview.src.includes(defaultThumbnailSrc)) {
             thumbnailDeleteBtn.classList.add('hidden');

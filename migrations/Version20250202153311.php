@@ -23,6 +23,7 @@ final class Version20250202153311 extends AbstractMigration
         $hashedPassword = password_hash('testDemo', PASSWORD_BCRYPT);
 
         $this->addSql("INSERT INTO user (username, email, roles, password, is_verified) VALUES 
+            ('SnowTricks', 'fake@mail.fr', '[]', NULL, FALSE), 
             ('demo', 'demo@mail.fr', '[]', '$hashedPassword', TRUE)");
     }
 

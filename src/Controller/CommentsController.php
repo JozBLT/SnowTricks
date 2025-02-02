@@ -25,7 +25,7 @@ class CommentsController extends AbstractController
         Request $request
     ): JsonResponse {
         $offset = $request->query->getInt('offset');
-        $comments = $commentsRepository->findBy(['tricks' => $tricks], ['createdAt' => 'ASC'], 10, $offset);
+        $comments = $commentsRepository->findBy(['tricks' => $tricks], ['createdAt' => 'DESC'], 10, $offset);
         $hasMore = count($comments) === 10;
         $html = $this->renderView('tricks/_comments.html.twig', [
             'comments' => $comments,
