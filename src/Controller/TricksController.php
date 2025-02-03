@@ -37,7 +37,7 @@ class TricksController extends AbstractController
         if ($tricks->getSlug() !== $slug) {
             return $this->redirectToRoute('tricks.show', ['slug' => $tricks->getSlug(), 'id' => $tricks->getId()]);
         }
-        $comments = $commentsRepository->findBy(['tricks' => $tricks], ['createdAt' => 'ASC'], 5);
+        $comments = $commentsRepository->findBy(['tricks' => $tricks], ['createdAt' => 'DESC'], 5);
         $commentForm = $this->createForm(CommentsType::class);
 
         return $this->render('tricks/show.html.twig', [

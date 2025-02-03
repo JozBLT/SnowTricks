@@ -39,7 +39,6 @@ final class Version20250202162412 extends AbstractMigration
             ('Stalefish', 'Le Stalefish est un grab qui consiste à saisir la carre backside de la planche avec la main arrière, généralement entre les fixations. Cette figure est célèbre pour son style unique et est souvent combinée avec des rotations aériennes. L\'ajout d\'une flexion marquée des jambes permet d\'accentuer l\'esthétique de la figure.', 'stalefish', 1, 1, NOW(), NOW()),
             ('Japan Air', 'Le Japan Air est un grab iconique où le snowboardeur saisit la carre frontside entre les fixations avec la main avant tout en fléchissant fortement la jambe arrière et en ramenant la planche vers l\'arrière. Cette figure est très appréciée pour son style distinctif et est souvent exécutée en half-pipe ou sur de gros sauts.', 'japan-air', 1, 1, NOW(), NOW()),
             ('Misty Flip', 'Le Misty Flip est un flip avant combiné avec une rotation horizontale de 540 degrés. Contrairement aux simples rotations, ce trick implique une dynamique de rotation inversée qui demande une synchronisation parfaite entre l\'impulsion et l\'atterrissage.', 'misty-flip', 1, 1, NOW(), NOW())");
-
     }
 
     public function down(Schema $schema): void
@@ -50,6 +49,5 @@ final class Version20250202162412 extends AbstractMigration
             'McTwist', 'Butter', 'Boardslide', '50-50', 'Lipslide', 'Tail Press', 'Nose Press',
             'Stalefish', 'Japan Air', 'Misty Flip'
         )");
-
     }
 }

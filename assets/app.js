@@ -42,19 +42,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const commentsContainer = document.getElementById('comments-container');
 
     if (loadMoreCommentsButton) {
-        let offsetComments = 5;
         const tricksId = loadMoreCommentsButton.dataset.tricksId;
 
         loadMoreCommentsButton.addEventListener('click', () => {
-            fetch(`/tricks/${tricksId}/comments/load-more?offset=${offsetComments}`)
+            fetch(`/load-more-comments?tricksId=${tricksId}`)
                 .then(response => response.json())
                 .then(data => {
-                    commentsContainer.querySelector('ul').innerHTML += data.html;
-                    offsetComments += 10;
-
-                    if (!data.hasMore) {
-                        loadMoreCommentsButton.style.display = 'none';
-                    }
+                    commentsContainer.querySelector('ul').insertAdjacentHTML('beforeend', data.html);
+                    loadMoreCommentsButton.style.display = 'none';
                 })
                 .catch(error => console.error('Erreur lors du chargement des commentaires:', error));
         });
@@ -147,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const thumbnailReplaceInput = document.getElementById('thumbnail-replace');
     const thumbnailDeleteBtn = document.getElementById('thumbnail-delete-btn');
     const thumbnailDeleteInput = document.getElementById('thumbnail-delete');
-    const defaultThumbnailSrc = "/images/creative_snowboard_1.jpg";
+    const defaultThumbnailSrc = "/images/creative_snowboard_3.jpg";
     const updateDeleteButtonVisibility = () => {
         if (thumbnailPreview.src.includes(defaultThumbnailSrc)) {
             thumbnailDeleteBtn.classList.add('hidden');
