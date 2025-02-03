@@ -4,7 +4,7 @@
 
 {% block body %}
     <!-- Title -->
-    <div class="px-8 py-4 flex flex-col items-center"  id="tricks-classic-view">
+    <div class="text-2xl font-bold px-8 py-4 flex flex-col items-center"  id="tricks-classic-view">
         <h1 class="text-center">{{ tricks.title | nl2br }}</h1>
     </div>
     <div class="mx-auto max-w-screen-lg 2xl:max-w-[70%] mb-5 bg-white border border-gray-200 shadow-md rounded-lg">
@@ -15,7 +15,7 @@
                 <img src="{{ vich_uploader_asset(tricks, 'thumbnailFile') }}"
                      alt="preview" class="w-full rounded-t-lg object-cover">
             {% else %}
-                <img src="{{ asset('images/creative_snowboard_1.jpg') }}"
+                <img src="{{ asset('images/creative_snowboard_3.jpg') }}"
                      alt="alternative_preview" class="w-full rounded-t-lg object-cover">
             {% endif %}
 
@@ -108,15 +108,22 @@
         </div>
 
         <!-- Comments -->
-        <div id="comments-container" data-trick-id="{{ tricks.id }}">
-            <ul class="px-2 md:px-8 space-y-4">
-                {% include 'tricks/_comments.html.twig' with {'comments': comments, 'commentForm': commentForm} %}
-            </ul>
+        <div id="comments-container" class="px-2 md:px-8 space-y-4">
+            {% include 'tricks/_send_comment.html.twig' with {'commentForm': commentForm} %}
+            <div class="text-center">
+                {% if comments|length > 0 %}
+                    <ul class="space-y-4 w-full lg:w-1/2 mx-auto">
+                        {% include 'tricks/_comments.html.twig' with {'comments': comments} %}
+                    </ul>
+                {% else %}
+                    <p class="mb-2">Aucun commentaire pour le moment. Soyez le premier à commenter !</p>
+                {% endif %}
+            </div>
         </div>
 
         {% if comments|length > 0 %}
             <div class="text-center my-4">
-                <button id="load-more-comments" data-offset="5" data-tricks-id="{{ tricks.id }}"
+                <button id="load-more-comments" data-tricks-id="{{ tricks.id }}"
                         class="bg-blue-500 text-white px-4 py-2 rounded text-sm hover:bg-blue-600">
                     Afficher plus
                 </button>

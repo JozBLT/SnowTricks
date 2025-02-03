@@ -25,7 +25,6 @@ final class Version20250202160352 extends AbstractMigration
                                                           ('Freeride', NOW(), NOW()), 
                                                           ('Alpin', NOW(), NOW()), 
                                                           ('Boardercross', NOW(), NOW())");
-
     }
 
     public function down(Schema $schema): void

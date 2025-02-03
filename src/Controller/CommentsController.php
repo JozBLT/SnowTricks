@@ -20,20 +20,24 @@ class CommentsController extends AbstractController
 {
     #[Route('/load-more-comments', name: 'load_more_comments', methods: ['GET'])]
     public function loadMoreComments(
-        Tricks $tricks,
+        Request $request,
         CommentsRepository $commentsRepository,
-        Request $request
+        TricksRepository $tricksRepository
     ): JsonResponse {
-        $offset = $request->query->getInt('offset');
-        $comments = $commentsRepository->findBy(['tricks' => $tricks], ['createdAt' => 'ASC'], 10, $offset);
-        $hasMore = count($comments) === 10;
-        $html = $this->renderView('tricks/_comments.html.twig', [
-            'comments' => $comments,
-        ]);
+        $tricksId = $request->query->getInt('tricksId');
+        $tricks = $tricksRepository->find($tricksId);
+
+        if (!$tricks) {
+            return new JsonResponse(['error' => 'Trick non trouvé'], Response::HTTP_NOT_FOUND);
+        }
+
+        $comments = $commentsRepository->findBy(['tricks' => $tricks], ['createdAt' => 'DESC'], null, 5);
 
         return new JsonResponse([
-            'html' => $html,
-            'hasMore' => $hasMore,
+            'html' => $this->renderView('tricks/_comments.html.twig', [
+                'comments' => $comments,
+                'tricks' => $tricks,
+            ]),
         ]);
     }
 
