@@ -1,0 +1,20 @@
+{% if app.user and app.user.isVerified %}
+    {{ form_start(commentForm, {'action': path('comment.create', {'id': tricks.id})}) }}
+    <div class="flex flex-col items-center md:w-4/5 mx-auto space-y-4">
+        <div class="w-full">
+            {{ form_widget(commentForm.content, {'attr': {'class': 'w-full rounded-lg border-gray-300 shadow-sm', 'rows': 4}}) }}
+        </div>
+        <div class="flex justify-end w-full">
+            {{ form_widget(commentForm.save) }}
+        </div>
+    </div>
+    {{ form_end(commentForm) }}
+{% else %}
+    <div class="text-center">
+        <p>
+            <a href="{{ path('login') }}"
+               class="text-blue-500 underline">Vous devez être connecté pour commenter ce post.</a>
+        </p>
+    </div>
+{% endif %}
+<hr class="w-4/5 mt-8 border-t-2 border-gray-300 mx-auto">

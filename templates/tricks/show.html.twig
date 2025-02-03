@@ -108,15 +108,22 @@
         </div>
 
         <!-- Comments -->
-        <div id="comments-container" data-trick-id="{{ tricks.id }}">
-            <ul class="px-2 md:px-8 space-y-4">
-                {% include 'tricks/_comments.html.twig' with {'comments': comments, 'commentForm': commentForm} %}
-            </ul>
+        <div id="comments-container" class="px-2 md:px-8 space-y-4">
+            {% include 'tricks/_send_comment.html.twig' with {'commentForm': commentForm} %}
+            <div class="text-center">
+                {% if comments|length > 0 %}
+                    <ul class="space-y-4 w-full lg:w-1/2 mx-auto">
+                        {% include 'tricks/_comments.html.twig' with {'comments': comments} %}
+                    </ul>
+                {% else %}
+                    <p class="mb-2">Aucun commentaire pour le moment. Soyez le premier à commenter !</p>
+                {% endif %}
+            </div>
         </div>
 
         {% if comments|length > 0 %}
             <div class="text-center my-4">
-                <button id="load-more-comments" data-offset="5" data-tricks-id="{{ tricks.id }}"
+                <button id="load-more-comments" data-tricks-id="{{ tricks.id }}"
                         class="bg-blue-500 text-white px-4 py-2 rounded text-sm hover:bg-blue-600">
                     Afficher plus
                 </button>
