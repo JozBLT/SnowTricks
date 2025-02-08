@@ -40,7 +40,7 @@ L’ensemble des figures de snowboard doivent être présentes à l’initialisa
 
 *   Cloner le projet
 
-*   Renseigner les informations requises dna sle .env (bdd, mail...)
+*   Renseigner les informations requises dans le .env (bdd, mail...)
 
 *   Installer les dépendances
 
