@@ -67,4 +67,4 @@ npm run build
 
 ## Auteur
 
-**Jonathan Dumont** - *OC-P5-Blog php* - [Joz](https://github.com/JozBLT)
+**Jonathan Dumont** - *OC-P6-Blog symfony* - [Joz](https://github.com/JozBLT)
