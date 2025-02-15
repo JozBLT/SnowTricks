@@ -34,7 +34,7 @@ class Tricks
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank]
-    #[Assert\Length(min: 100)]
+    #[Assert\Length(min: 10)]
     #[BanWords]
     private string $content = '';
 
