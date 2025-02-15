@@ -17,9 +17,14 @@
                 {{ form_widget(editForm.title, {
                     'attr': {
                         'class': 'block w-full px-2 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
-                        'placeholder': 'Titre du Trick'
+                        'placeholder': 'Titre du Trick',
+                        'required': 'required',
+                        'minlength': '3',
                     }
                 }) }}
+                <p id="title-error" class="text-red-500 text-sm mt-1">
+                    {{ form_errors(editForm.title) }}
+                </p>
             </div>
         </div>
 
@@ -68,7 +73,7 @@
         <div class="flex flex-col md:flex-row justify-between items-start gap-6 px-8 py-4">
 
             <!-- Images Slider -->
-            <div id="carouselImages" class="swiper pb-8 mx-auto relative">
+            <div id="carouselImages" class="swiper mx-auto relative">
                 <!-- Fake position for image -->
                 <div class="swiper-slide flex flex-col items-center mb-4 cursor-pointer border-2 border-dashed border-gray-500 rounded-lg h-32">
                     <label class="cursor-pointer w-full h-full flex flex-col items-center justify-center text-gray-500">
@@ -79,7 +84,7 @@
                         <input type="file" id="add-image-input" class="hidden">
                     </label>
                 </div>
-                <div class="swiper-wrapper">
+                <div class="swiper-wrapper pb-8">
                     {% for image in tricks.images %}
                         <div class="swiper-slide flex flex-col items-center relative">
                             <div class="relative">
@@ -115,7 +120,7 @@
             </div>
 
             <!-- Videos Slider -->
-            <div id="carouselVideos" class="swiper pb-8 mx-auto relative">
+            <div id="carouselVideos" class="swiper mx-auto relative">
                 <!-- Fake position for video -->
                 <div class="swiper-slide flex flex-col items-center mb-4 cursor-pointer border-2 border-dashed border-gray-500 rounded-lg h-32">
                     <label id="openAddVideoModal" class="cursor-pointer w-full h-full flex flex-col items-center justify-center text-gray-500">
@@ -125,7 +130,7 @@
                         </svg>
                     </label>
                 </div>
-                <div class="swiper-wrapper">
+                <div class="swiper-wrapper pb-8">
                     {% for video in tricks.videos %}
                         <div class="swiper-slide flex flex-col items-center relative">
                             <div class="relative">
@@ -212,15 +217,20 @@
             {{ form_widget(editForm.content, {
                 'attr': {
                     'class': 'block w-11/12 h-64 px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none',
-                    'placeholder': 'Écrivez ici...'
+                    'placeholder': 'Écrivez ici...',
+                    'required': 'required',
+                    'minlength': '10',
                 }
             }) }}
+            <p id="content-error" class="text-red-500 text-sm mt-1">
+                {{ form_errors(editForm.content) }}
+            </p>
             <!-- Validation/Delete -->
             <div class="flex justify-end w-full mt-4 space-x-4">
                 <div>
                     {{ form_widget(editForm.save, {
                         'attr': {
-                            'class': 'px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600'
+                            'class': 'px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed'
                         }
                     }) }}
                 </div>

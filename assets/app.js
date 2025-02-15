@@ -480,4 +480,55 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    const submitBtn = document.querySelector('button[type="submit"]');
+    const fields = [
+        {
+            input: document.getElementById('title-input'),
+            error: document.getElementById('title-error'),
+            minLength: 3,
+            message: 'Le titre doit contenir au moins 3 caractères.'
+        },
+        {
+            input: document.getElementById('content-input'),
+            error: document.getElementById('content-error'),
+            minLength: 10,
+            message: 'Le contenu doit contenir au moins 10 caractères.'
+        }
+    ];
+
+    function checkFieldValidity(field) {
+        if (field.input.value.length < field.minLength) {
+            field.error.textContent = field.message;
+            field.error.classList.remove('hidden');
+            field.input.classList.add('border-red-500');
+        } else {
+            field.error.textContent = '';
+            field.error.classList.add('hidden');
+            field.input.classList.remove('border-red-500');
+        }
+    }
+
+    function checkFormValidity() {
+        let isValid = true;
+        fields.forEach(field => {
+            checkFieldValidity(field);
+            if (field.input.value.length < field.minLength) {
+                isValid = false;
+            }
+        });
+
+        if (isValid) {
+            submitBtn.removeAttribute('disabled');
+        } else {
+            submitBtn.setAttribute('disabled', 'disabled');
+        }
+    }
+    checkFormValidity();
+    fields.forEach(field => {
+        field.input.addEventListener('input', () => {
+            checkFieldValidity(field);
+            checkFormValidity();
+        });
+    });
 });

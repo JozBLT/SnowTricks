@@ -8,4 +8,5 @@ framework:
 when@test:
     framework:
         validation:
+            enable_annotations: true
             not_compromised_password: false
