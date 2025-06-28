@@ -1,4 +1,4 @@
-# Blog OpenClassrooms
+# Blog SnowTricks
 
 ![banner](https://github.com/user-attachments/assets/000bdfe6-a392-4a96-8ea5-7395207a34c7)
 
